@@ -1,0 +1,18 @@
+filing:
+  outdir: './results_data/'
+  outfile_name: 'test'
+  output_format: 'uvh5'
+freq:
+  Nfreqs: 1
+  start_freq: 10000000.0
+  end_freq: 10000000.0
+sources:
+  catalog: '../pyuvsim/reference_simulations/first_generation/catalog_files/gleam.vot'
+  min_flux: 0.05
+telescope:
+  array_layout: 'layout.csv'
+  telescope_config_name: 'uvbeam.yaml'
+time:
+  Ntimes: 1
+  integration_time: 60
+  start_time: 2458116.24485307
