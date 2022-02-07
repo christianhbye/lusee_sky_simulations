@@ -1,17 +1,18 @@
 filing:
-  outdir: './results_data/'
+  outdir: '/home/christian/Documents/research/lusee/lusee_sky_simulations/results_data/'
   outfile_name: 'test'
   output_format: 'uvh5'
 freq:
   Nfreqs: 1
   start_freq: 10000000.0
   end_freq: 10000000.0
+  bandwidth: 10000.0
 sources:
-  catalog: '../pyuvsim/reference_simulations/first_generation/catalog_files/gleam.vot'
+  catalog: '/home/christian/Documents/research/lusee/pyuvsim/reference_simulations/first_generation/catalog_files/letter_R_12pt_2458098.38824015.txt'
   min_flux: 0.05
 telescope:
-  array_layout: 'layout.csv'
-  telescope_config_name: 'uvbeam.yaml'
+  array_layout: '/home/christian/Documents/research/lusee/lusee_sky_simulations/mwa_nocore_layout.csv'
+  telescope_config_name: '/home/christian/Documents/research/lusee/lusee_sky_simulations/uvbeam.yaml'
 time:
   Ntimes: 1
   integration_time: 60
