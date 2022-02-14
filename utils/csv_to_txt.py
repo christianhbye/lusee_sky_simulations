@@ -1,12 +1,13 @@
 from dataclasses import dataclass, field
 import numpy as np
+import numpy.typing as npt
 from typing import List
 
 
 @dataclass
 class Beam:
     fname: str
-    data: np.typing.ArrayLike = field(init=False)
+    data: npt.ArrayLike = field(init=False)
     phi_col: int = field(init=False)
     theta_col: int = field(init=False)
     volt_cols: List[int] = field(init=False)
