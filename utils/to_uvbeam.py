@@ -10,9 +10,12 @@ args = parser.parse_args()
 
 beam_path = Path(args.beam_dir)
 
-frequencies = np.unique([float(fname.name.split("Freq")[-1].split("MHz")[0])
-        for fname in beam_path.iterdir()])
+frequencies = np.unique(
+    [
+        float(fname.name.split("Freq")[-1].split("MHz")[0])
+        for fname in beam_path.iterdir()
+    ]
+)
 
 beam_inphase = beam_path.glob("*_in_phase.csv")
 beam_outphase = beam_path.glob("*_out_of_phase.csv")
-
