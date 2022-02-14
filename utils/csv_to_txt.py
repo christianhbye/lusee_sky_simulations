@@ -96,12 +96,8 @@ class Beam:
         return new_data
 
     def _process_data(self):
-        self.data = self._delete_wrap(
-            col=self.theta_col, period=np.pi
-        )
-        self.data = self._delete_wrap(
-            col=self.phi_col, period=2 * np.pi
-        )
+        self.data = self._delete_wrap(col=self.theta_col, period=np.pi)
+        self.data = self._delete_wrap(col=self.phi_col, period=2 * np.pi)
         self.data = self._rev_indices()
         self.data = self._shift_phi()
 
@@ -109,7 +105,9 @@ class Beam:
         power = np.empty((len(self.data), 3))
         power[:, 0] = self.data[:, self.theta_col]
         power[:, 1] = self.data[:, self.phi_col]
-        power[:, 2] = np.sqrt(np.sum(self.data[:, self.volt_cols] ** 2, axis=1))
+        power[:, 2] = np.sqrt(
+            np.sum(self.data[:, self.volt_cols] ** 2, axis=1)
+        )
 
         return power
 

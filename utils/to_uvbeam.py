@@ -1,7 +1,6 @@
 from csv_to_txt import Beam
 from misc import get_freq
 from argparse import ArgumentParser
-import numpy as np
 from pathlib import Path
 import pyuvdata
 
@@ -13,9 +12,16 @@ args = parser.parse_args()
 
 beam_path = Path(args.beam_dir)
 
-beam_inphase = [p for p in beam_path.glob("*_in_phase.csv") if "perpendicular"
-        not in p.name]
-beam_outphase = [p for p in beam_path.glob("*_out_of_phase.csv") if "perpendicular" not in p.name]
+beam_inphase = [
+    p
+    for p in beam_path.glob("*_in_phase.csv")
+    if "perpendicular" not in p.name
+]
+beam_outphase = [
+    p
+    for p in beam_path.glob("*_out_of_phase.csv")
+    if "perpendicular" not in p.name
+]
 
 out_paths = []
 frequencies = []
@@ -32,19 +38,19 @@ frequencies = sorted(frequencies)
 
 uvb = pyuvdata.uvbeam.UVBeam()
 uvb.read_cst_beam(
-       filename=out_paths,
-       beam_type="power",
-       feed_pol="x",
-       rotate_pol=False,
-       frequency=frequencies,
-       telescope_name="lusee-night",
-       feed_name="lusee",
-       feed_version="1.0",
-       model_name="monopole-in-phase",
-       model_version="1.0",
-       history="002KMR",
-       x_orientation="north",
-       reference_impedance=50
-       )
+    filename=out_paths,
+    beam_type="power",
+    feed_pol="x",
+    rotate_pol=False,
+    frequency=frequencies,
+    telescope_name="lusee-night",
+    feed_name="lusee",
+    feed_version="1.0",
+    model_name="monopole-in-phase",
+    model_version="1.0",
+    history="002KMR",
+    x_orientation="north",
+    reference_impedance=50,
+)
 
 uvb.write_beamfits(args.uvbeam_path, clobber=True)
