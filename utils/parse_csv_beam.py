@@ -27,10 +27,10 @@ class Beam:
         self.data = np.loadtxt(self.fname, skiprows=1, delimiter=",")
         self.theta_col = np.where(np.array(column_names) == "theta")[0][0]
         self.phi_col = np.where(np.array(column_names) == "phi")[0][0]
-        self.volt_cols = [3, 4, 5, 6, 7, 8]  # should be the last cols
+        self.volt_cols = [2, 3, 4, 5, 6, 7]  # should be the last cols
         # check that volt col is the last col
         assert self.phi_col not in self.volt_cols  # not the same as phi
-        assert self.theta_cols not in self.volt_cols  # not the same as theta
+        assert self.theta_col not in self.volt_cols  # not the same as theta
         assert len(self.data[0]) == len(self.volt_cols) + 2
 
         # convert to radians
@@ -96,20 +96,18 @@ class Beam:
         return new_data
 
     def _process_data(self):
-        self.data = self._delete_wrap(
-            self.data, col=self.theta_col, period=np.pi
-        )
-        self.data = self._delete_wrap(
-            self.data, col=self.phi_col, period=2 * np.pi
-        )
-        self.data = self._rev_indices(self.data, self.phi_col, self.theta_col)
-        self.data = self._shift_phi(self.data, self.phi_col)
+        self.data = self._delete_wrap(col=self.theta_col, period=np.pi)
+        self.data = self._delete_wrap(col=self.phi_col, period=2 * np.pi)
+        self.data = self._rev_indices()
+        self.data = self._shift_phi()
 
     def efield_to_power(self):
         power = np.empty((len(self.data), 3))
-        power[0] = self.data[:, self.theta_col]
-        power[1] = self.data[:, self.phi_col]
-        power[2] = np.sqrt(np.sum(self.data[:, self.volt_cols] ** 2, axis=1))
+        power[:, 0] = self.data[:, self.theta_col]
+        power[:, 1] = self.data[:, self.phi_col]
+        power[:, 2] = np.sqrt(
+            np.sum(self.data[:, self.volt_cols] ** 2, axis=1)
+        )
 
         return power
 
@@ -136,4 +134,4 @@ if __name__ == "__main__":
     parser.add_argument("out_fname", metavar="-of", type=str)
     args = parser.parse_args()
     beam = Beam(args.in_fname)
-    beam.to_txt(args, args.out_fname)
+    beam.to_txt(args.out_fname)
