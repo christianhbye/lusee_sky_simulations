@@ -6,9 +6,9 @@ f.close()
 
 
 setup(
-    name="lusee-sky-sim",
+    name="luseesky",
     version="0.0.1",
-    # description="CalCalc: some catchy description",
+    # description="",
     long_description=readme,
     author="Christian H. Bye",
     author_email="chbye@berkeley.edu",
