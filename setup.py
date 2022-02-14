@@ -14,7 +14,7 @@ setup(
     author_email="chbye@berkeley.edu",
     url="https://github.com/christianhbye/lusee_sky_simulations",
     packages=find_packages(),
-    install_requires=["numpy", "matplotlib", "pyuvsim", "pyuvdata"],
+    install_requires=["numpy", "matplotlib", "pyuvsim", "pyuvdata", "jupyter"],
     extras_require={"tests": "pytest", "style": ["black", "flake8"]},
     include_package_data=True,
     python_requires=">=3.6",
