@@ -21,13 +21,13 @@ def mk_linspace(
                 'step' will be changed.",
             UserWarning,
         )
-    num = (high - low) // step + 1
+    num = int((high - low) // step + 1)
     return np.linspace(low, high, num=num)
 
 
 @dataclass(frozen=True)
 class Beam:
-    __slots__ = ["fname", "E_field", "frequencies", "theta", "phi"]
+    __slots__ = ["fname"]
     fname: str
     E_field: np.ndarray = field(init=False)
     frequencies: np.ndarray = field(init=False)
