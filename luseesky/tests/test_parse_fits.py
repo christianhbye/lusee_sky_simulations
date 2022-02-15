@@ -1,4 +1,4 @@
-from luseesky.utils import parse_fits as lpf
+import luseesky.utils.parse_fits as lpf
 import numpy as np
 import pytest
 
