@@ -24,7 +24,7 @@ setup(
     ],
     extras_require={"tests": "pytest", "style": ["black", "flake8"]},
     include_package_data=True,
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     # license="MIT",
     # classifiers=[
     #    "Intended Audience :: End Users/Desktop",
