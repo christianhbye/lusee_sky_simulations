@@ -95,7 +95,7 @@ class Beam:
         )  # and is bigger than 0 everywhere
         return new_data
 
-    def _process_data(self):
+    def process_data(self):
         self.data = self._delete_wrap(col=self.theta_col, period=np.pi)
         self.data = self._delete_wrap(col=self.phi_col, period=2 * np.pi)
         self.data = self._rev_indices()
@@ -112,7 +112,6 @@ class Beam:
         return power
 
     def to_txt(self, outpath, to_power=True):
-        self._process_data()
         if to_power:
             power = self.efield_to_power()
             np.savetxt(
@@ -134,4 +133,5 @@ if __name__ == "__main__":
     parser.add_argument("out_fname", metavar="-of", type=str)
     args = parser.parse_args()
     beam = Beam(args.in_fname)
+    beam.process_data()
     beam.to_txt(args.out_fname)

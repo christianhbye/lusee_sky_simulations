@@ -1,2 +1,4 @@
 data/
 notebooks/.ipynb_checkpoints
+.venv/
+luseesky/__pycache__/
