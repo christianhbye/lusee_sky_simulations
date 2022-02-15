@@ -5,11 +5,7 @@ from typing import Any
 import warnings
 
 
-def mk_linspace(
-        low: float,
-        high: float,
-        step: Any = 1
-) -> np.ndarray:  
+def mk_linspace(low: float, high: float, step: Any = 1) -> np.ndarray:
     """
     Make a linspace given low, high, step. This avoids the stability
     issues in np.arange(low, high, step) when low >> step (see numpy doc).
