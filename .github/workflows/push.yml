@@ -32,7 +32,7 @@ jobs:
       - name: Check type hints with mypy
         run: |
           python -m pip install mypy types-requests
-          mypy ./luseesky  --follow-imports=skip
+          mypy ./luseesky
       - name: Test with pytest
         run: |
           # python -m pip install pytest
