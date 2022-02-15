@@ -1,8 +1,8 @@
-from csv_to_txt import Beam
-from misc import get_freq
+from .parse_csv_beam import Beam
+from .misc import get_freq
 from argparse import ArgumentParser
 from pathlib import Path
-import pyuvdata
+import pyuvdata  # type: ignore
 
 parser = ArgumentParser()
 parser.add_argument("beam_dir", metavar="-b", type=str)
