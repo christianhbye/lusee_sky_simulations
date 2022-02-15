@@ -27,7 +27,7 @@ def mk_linspace(
 
 @dataclass(frozen=True)
 class Beam:
-    __slots__ = ["fname", "frequencies", ""]
+    __slots__ = ["fname", "E_field", "frequencies", "theta", "phi"]
     fname: str
     E_field: np.ndarray = field(init=False)
     frequencies: np.ndarray = field(init=False)
