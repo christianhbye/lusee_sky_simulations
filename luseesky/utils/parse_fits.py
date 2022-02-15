@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-import fitsio
+from astropy.io import fits
 import numpy as np
 import warnings
 
@@ -32,9 +32,9 @@ class Beam:
     phi: np.ndarray = field(init=False)
 
     def __post_init__(self):
-        header = fitsio.read_header(self.fname)
-        fits = fitsio.FITS(self.fname, "r")
-        self.E_field = fits[0].read() + 1j * fits[1].read()
+        simfits = fits.open(self.fname)
+        header = simfits[0].header
+        self.E_field = fits[0].data + 1j * fits[2].data
         self.frequencies = mk_linspace(
             header["freq_start"], header["freq_end"], step=header["freq_step"]
         )
