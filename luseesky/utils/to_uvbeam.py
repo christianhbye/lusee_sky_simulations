@@ -1,4 +1,4 @@
-from csv_to_txt import Beam
+from parse_csv_beam import Beam
 from misc import get_freq
 from argparse import ArgumentParser
 from pathlib import Path
