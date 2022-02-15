@@ -1,14 +1,14 @@
 from dataclasses import dataclass, field
-from astropy.io import fits
+from astropy.io import fits  # type: ignore
 import numpy as np
+from typing import Any
 import warnings
 
 
-# type: ignore
 def mk_linspace(
         low: float,
         high: float,
-        step: float = 1
+        step: Any = 1
 ) -> np.ndarray:  
     """
     Make a linspace given low, high, step. This avoids the stability
