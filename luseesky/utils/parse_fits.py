@@ -4,7 +4,6 @@ import numpy as np  # type: ignore
 import warnings
 
 
-@overload
 def mk_linspace(low: float, high: float, step: float = 1) -> np.ndarray:
     """
     Make a linspace given low, high, step. This avoids the stability
