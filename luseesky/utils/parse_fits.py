@@ -4,11 +4,12 @@ import numpy as np
 import warnings
 
 
+# type: ignore
 def mk_linspace(
         low: float,
         high: float,
         step: float = 1
-) -> np.ndarray:  # type: ignore  
+) -> np.ndarray:  
     """
     Make a linspace given low, high, step. This avoids the stability
     issues in np.arange(low, high, step) when low >> step (see numpy doc).
