@@ -3,3 +3,4 @@ notebooks/.ipynb_checkpoints
 .venv/
 luseesky/__pycache__/
 luseesky/utils/__pycache__/
+luseesky/tests/__pycache__/
