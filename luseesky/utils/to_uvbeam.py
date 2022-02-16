@@ -1,56 +1,62 @@
-from .parse_csv_beam import Beam
-from .misc import get_freq
-from argparse import ArgumentParser
-from pathlib import Path
-import pyuvdata  # type: ignore
+from pyuvdata import uvbeam
+from typing import Optional, NoReturn
 
-parser = ArgumentParser()
-parser.add_argument("beam_dir", metavar="-b", type=str)
-parser.add_argument("txt_out_dir", metavar="-t", type=str)
-parser.add_argument("uvbeam_path", metavar="-uv", type=str)
-args = parser.parse_args()
+def _flatten(arr, freq_size, th_size, ph_size):
+    """
+    Convert array with the shape (freq_size, th_size, ph_size) to a 2d array
+    of shape (freq_size, th_size*ph_size) where theta increases faster than phi
+    """
+    return arr.reshape(freq_size, th_size*ph_size, order="F")
 
-beam_path = Path(args.beam_dir)
+def _write_txt_power(
+        beam: np.ndarray,  # must be in V
+        frequencies: np.ndarray
+        theta: np.ndarray,
+        phi: np.ndarray,
+        freq_axis: int = 0
+        theta_axis: int = 1,
+        phi_axis: int = 2,
+        path: str = ""
+) -> str:
 
-beam_inphase = [
-    p
-    for p in beam_path.glob("*_in_phase.csv")
-    if "perpendicular" not in p.name
-]
-beam_outphase = [
-    p
-    for p in beam_path.glob("*_out_of_phase.csv")
-    if "perpendicular" not in p.name
-]
+    beam_2d = _flatten(beam, frequencies.size, theta.size, phi.size)
+    for i, freq in enumerate(frequencies):
+        np.savetxt(
+            path+f"/{freq}.txt",
+            np.column_stack((theta, phi, beam_2d[i]))
+            header="Theta [rad] Phi [rad] Abs(V) [V] \n\n",
+            comments="",
+        )
 
-out_paths = []
-frequencies = []
-for fname in beam_inphase:
-    freq = get_freq(fname.name, unit="MHz")
-    frequencies.append(freq)
-    out_path = Path(args.txt_out_dir) / Path(f"Freq{freq}MHz_in_phase.txt")
-    out_paths.append(str(out_path))
-    beam = Beam(str(fname))
-    beam.to_txt(out_path)
+    return path
 
-out_paths = sorted(out_paths, key=lambda x: frequencies[out_paths.index(x)])
-frequencies = sorted(frequencies)
+def _write_txt_efield():
+    raise (NotImplementedError)
 
-uvb = pyuvdata.uvbeam.UVBeam()
-uvb.read_cst_beam(
-    filename=out_paths,
-    beam_type="power",
-    feed_pol="x",
-    rotate_pol=False,
-    frequency=frequencies,
-    telescope_name="lusee-night",
-    feed_name="lusee",
-    feed_version="1.0",
-    model_name="monopole-in-phase",
-    model_version="1.0",
-    history="002KMR",
-    x_orientation="north",
-    reference_impedance=50,
-)
+def _delete_txt(path: str) -> NoReturn:
+    # cleaning
 
-uvb.write_beamfits(args.uvbeam_path, clobber=True)
+def write_uvb(fname: str, beam: np.ndarray, frequencies: np.ndarray,
+        beam_type: str = "power", outpath: str = ""): -> Optional[uvbeam.UVBeam]
+    txtpath = _write_txt()
+    uvb = uvbeam.UVBeam()
+    uvb.read_cst_beam(
+            filename=txtpath,
+            beam_type="power",
+            feed_pol="x",
+            rotate_pol=False,
+            frequency=frequencies,
+            telescope_name="lusee-night",
+            feed_name="lusee",
+            feed_version="1.0",
+            model_name="monopole",
+            model_version="1.0",
+            history="003",
+            x_orientation="north",
+            reference_impedance=50)
+    _delete_txt(txtpath)
+    if len(outpath):
+        uvb.write_beamfits(outpath, clobber=True)
+        return None
+    else:
+        return uvb
