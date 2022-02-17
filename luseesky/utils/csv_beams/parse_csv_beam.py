@@ -44,10 +44,8 @@ class Beam:
                 self.data[:, col] /= 1e3  # convert mV to V
 
     def _delete_wrap(
-            self,
-            col: int = 0,
-            period: float = 2 * np.pi
-        )-> np.ndarray:
+        self, col: int = 0, period: float = 2 * np.pi
+    ) -> np.ndarray:
         """
         In case one of the axis is sampled around the circle (eg includes both
         0 and 360), we delete the values for the second round around the circle

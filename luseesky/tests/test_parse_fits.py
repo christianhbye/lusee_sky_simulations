@@ -8,7 +8,7 @@ def test_mk_linspace():
     arr = lpf.mk_linspace(lo, hi, step=step)
     assert np.isclose(lo, arr.min())
     assert np.isclose(hi, arr.max())
-    assert np.allclose(np.diff(arr), step*np.ones_like(np.diff(arr)))
+    assert np.allclose(np.diff(arr), step * np.ones_like(np.diff(arr)))
 
     # should raise a warning
     lo, hi, step = 1, 3.2, 0.5
@@ -18,19 +18,32 @@ def test_mk_linspace():
         assert np.isclose(lo, arr.min())
         assert np.isclose(hi, arr.max())
 
+
 def test_flatten():
     test_beam = lpf.Beam("luseesky/tests/beam.fits")
-    flat_beam = test_beam._flatten(beam_type="power")
+    flat_beam, flat_th, flat_ph = test_beam._flatten(beam_type="power")
     th_size = test_beam.power.shape[1]
     ph_size = test_beam.power.shape[2]
     for phi in [0, 5, 45, 137]:  # fixed phi and frequency (=30)
         assert np.allclose(
-                test_beam.power[30, :, phi],
-                flat_beam[30, phi*th_size:(phi+1)*th_size]
-            )
+            test_beam.power[30, :, phi],
+            flat_beam[30, phi * th_size : (phi + 1) * th_size],
+        )
     for theta in [13, 27, 50, 88]:  # fixed theta and frequency (=5)
         assert np.allclose(
-                test_beam.power[5, theta, :],
-                flat_beam[5, theta::th_size]
+            test_beam.power[5, theta, :], flat_beam[5, theta::th_size]
+        )
+    assert all(
+        [
+            np.allclose(
+                flat_th[:th_size], flat_th[i * th_size : (i + 1) * th_size]
             )
-
+            for i in range(ph_size)
+        ]
+    )  # flat theta repeats it self
+    assert all(
+        [
+            np.allclose(flat_ph[::th_size], flat_ph[i::th_size])
+            for i in range(th_size)
+        ]
+    )
