@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 import numpy as np
 import numpy.typing as npt
-from typing import List
+from typing import List, NoReturn
 
 
 @dataclass
@@ -41,7 +41,11 @@ class Beam:
             if "mv" in units[col]:
                 self.data[:, col] /= 1e3  # convert mV to V
 
-    def _delete_wrap(self, col=0, period=2 * np.pi):
+    def _delete_wrap(
+            self,
+            col: int = 0,
+            period: float = 2 * np.pi
+        )-> np.ndarray:
         """
         In case one of the axis is sampled around the circle (eg includes both
         0 and 360), we delete the values for the second round around the circle
@@ -58,7 +62,7 @@ class Beam:
         assert new_data[:, col].max() - new_data[:, col].min() < period
         return new_data
 
-    def _rev_indices(self):
+    def _rev_indices(self) -> np.ndarray:
         """
         Convert from phi changing fastest to theta changing fastest
         (Fortran style to C style)
@@ -74,7 +78,7 @@ class Beam:
 
         return new_data
 
-    def _shift_phi(self):
+    def _shift_phi(self) -> NoReturn:
         """
         Change phi from going -pi->pi to 0->2pi
         """
@@ -95,13 +99,13 @@ class Beam:
         )  # and is bigger than 0 everywhere
         return new_data
 
-    def process_data(self):
+    def process_data(self) -> NoReturn:
         self.data = self._delete_wrap(col=self.theta_col, period=np.pi)
         self.data = self._delete_wrap(col=self.phi_col, period=2 * np.pi)
         self.data = self._rev_indices()
         self.data = self._shift_phi()
 
-    def efield_to_power(self):
+    def efield_to_power(self) -> np.ndarray:
         power = np.empty((len(self.data), 3))
         power[:, 0] = self.data[:, self.theta_col]
         power[:, 1] = self.data[:, self.phi_col]
@@ -111,7 +115,7 @@ class Beam:
 
         return power
 
-    def to_txt(self, outpath, to_power=True):
+    def to_txt(self, outpath: str, to_power=True) -> NoReturn:
         if to_power:
             power = self.efield_to_power()
             np.savetxt(

@@ -1,9 +1,9 @@
 from astropy.io import fits  # type: ignore
 from dataclasses import dataclass, field
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # type: ignore
 import numpy as np
 from pathlib import Path
-from pyuvdata import uvbeam
+from pyuvdata import uvbeam  # type: ignore
 from typing import Any, NoReturn
 import warnings
 
@@ -60,7 +60,7 @@ class Beam:
             header["phi_start"], header["phi_end"], step=header["phi_step"]
         )
 
-    def plot_power(self, freq: float):
+    def plot_power(self, freq: float) -> NoReturn:
         freq_idx = np.argmin(np.abs(self.frequencies - freq))
         plt.figure()
         plt.imshow(self.power[freq_idx], interpolation="none")  # set extent
@@ -69,8 +69,8 @@ class Beam:
         plt.xlabel("$\\theta$ [deg]")
         plt.ylabel("$\\phi$ [deg]")
         plt.show()
-
-    def plot_beamcuts(self, phi: float = 0):
+    
+    def plot_beamcuts(self, phi: float = 0): -> NoReturn:
         phi_idx = np.argmin(np.abs(self.phi - phi))
         plt.figure()
         plt.imshow(
@@ -112,12 +112,14 @@ class Beam:
                 header="Theta [rad] Phi [rad] Abs(V) [V] \n\n",
                 comments="",
             )
+        return savepath
 
+    @staticmethod
     def _delete_txt(path: str, verbose: bool = False) -> NoReturn:
-        Path.unlink(path + "/*.txt")
+        Path(path + "/*.txt").unlink()
         if verbose:
             print("Deleting files.")
-        Path.rmdir(path)
+        Path(path).rmdir()
         if verbose:
             print(f"Remove directory {path}.")
 
@@ -142,7 +144,7 @@ class Beam:
                 x_orientation="north",
                 reference_impedance=50,
             )
-            self._delete_txt(txtpath)
+            _delete_txt(txtpath)
         elif beam_type == "efield":
             raise NotImplementedError
         else:
