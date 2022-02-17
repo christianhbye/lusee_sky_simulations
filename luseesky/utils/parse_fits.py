@@ -58,7 +58,7 @@ class Beam:
         )
         self.phi = mk_linspace(
             header["phi_start"], header["phi_end"], step=header["phi_step"]
-        ) 
+        )
         if np.allclose(self.E_field[:, :, 0], self.E_field[:, :, -1]):
             assert np.isclose(self.phi[-1] - self.phi[0], 360)
             self.E_field = self.E_field[:, :, :-1]  # drop phi = 360 deg
@@ -69,23 +69,21 @@ class Beam:
         freq_idx = np.argmin(np.abs(self.frequencies - freq))
         plt.figure()
         plt.imshow(
-                self.power[freq_idx],
-                interpolation="none",
-                aspect="auto",
-                extent=[
-                    self.phi.min(),
-                    self.phi.max(),
-                    self.theta.max(),
-                    self.theta.min()
-                ]
-            )
+            self.power[freq_idx],
+            interpolation="none",
+            aspect="auto",
+            extent=[
+                self.phi.min(),
+                self.phi.max(),
+                self.theta.max(),
+                self.theta.min(),
+            ],
+        )
         cbar = plt.colorbar()
         cbar.set_label("Power [$\\rm{V}^2$]")
         plt.title(
-                "Power at $\\nu={:.0f}$ MHz".format(
-                    self.frequencies[freq_idx]
-                    )
-                )
+            "Power at $\\nu={:.0f}$ MHz".format(self.frequencies[freq_idx])
+        )
         plt.xlabel("$\\phi$ [deg]")
         plt.ylabel("$\\theta$ [deg]")
         plt.show()
@@ -101,8 +99,8 @@ class Beam:
                 self.theta.min(),
                 self.theta.max(),
                 self.frequencies.max(),
-                self.frequencies.min()
-            ]
+                self.frequencies.min(),
+            ],
         )
         plt.title("Power at $\\phi={:.0f}$ deg".format(self.phi[phi_idx]))
         plt.ylabel("$\\nu$ [MHz]")
@@ -127,11 +125,11 @@ class Beam:
             self.frequencies.size, self.theta.size * self.phi.size, order="F"
         )
         flat_theta = np.tile(self.theta, self.phi.size)
-        flat_phi = np.tile(self.phi, self.theta.size).reshape(
-                self.phi.size,
-                self.theta.size,
-                order="F"
-                ).flatten(order="C")
+        flat_phi = (
+            np.tile(self.phi, self.theta.size)
+            .reshape(self.phi.size, self.theta.size, order="F")
+            .flatten(order="C")
+        )
         return flat_beam, flat_theta, flat_phi
 
     def _write_txt_power(self, path: str = ".", verbose: bool = False) -> str:
@@ -159,14 +157,12 @@ class Beam:
             print(f"Remove directory {path}.")
 
     def to_uvbeam(
-            self,
-            beam_type: str = "power",
-            verbose: bool = False
+        self, beam_type: str = "power", verbose: bool = False
     ) -> uvbeam.UVBeam:
         if beam_type == "power":
             txtpath = self._write_txt_power(verbose=verbose)
             txtfiles = [child.name for child in Path(txtpath).iterdir()]
-            frequencies = [float(f[:-len(".txt")]) for f in txtfiles]
+            frequencies = [float(f[: -len(".txt")]) for f in txtfiles]
             uvb = uvbeam.UVBeam()
             uvb.read_cst_beam(
                 filename=txtfiles,
