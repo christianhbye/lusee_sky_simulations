@@ -104,7 +104,6 @@ class Beam:
                 self.frequencies.min()
             ]
         )
-        plt.colorbar()  # units of V squared
         plt.title("Power at $\\phi={:.0f}$ deg".format(self.phi[phi_idx]))
         plt.ylabel("$\\nu$ [MHz]")
         plt.xlabel("$\\theta$ [deg]")
