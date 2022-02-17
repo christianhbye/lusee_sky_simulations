@@ -20,7 +20,7 @@ def test_mk_linspace():
 
 def test_flatten():
     test_beam = lpf.Beam(
-            "../AntennaSimResults/003_Freq1-50MHz_Delta1MHz_AntennaLength6m"
+            "AntennaSimResults/003_Freq1-50MHz_Delta1MHz_AntennaLength6m"
             "_AntennaAngle30deg_LanderHeight2m/RadiatedElectricField_Antenna"
             "Length6m_AntennaAngle30deg_LanderHeight2m_monopole.fits"
             )
