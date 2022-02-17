@@ -164,7 +164,9 @@ class Beam:
         if beam_type == "power":
             txtpath = self._write_txt_power(verbose=verbose)
             txtfiles = [str(child) for child in Path(txtpath).iterdir()]
-            frequencies = [float(f[: -len(".txt")]) for f in txtfiles]
+            frequencies = [
+                    float(Path(f).name[: -len(".txt")]) for f in txtfiles
+                ]
             uvb = uvbeam.UVBeam()
             uvb.read_cst_beam(
                 filename=txtfiles,
