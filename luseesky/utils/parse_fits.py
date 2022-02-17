@@ -151,7 +151,9 @@ class Beam:
 
     @staticmethod
     def _delete_txt(path: str, verbose: bool = False):
-        Path(path + "/*.txt").unlink()
+        for f in Path(path).iterdir():
+            assert f.suffix == ".txt"
+            f.unlink()  # delete file
         if verbose:
             print("Deleting files.")
         Path(path).rmdir()
@@ -167,6 +169,11 @@ class Beam:
             frequencies = [
                     float(Path(f).name[: -len(".txt")]) for f in txtfiles
                 ]
+            txtfiles = sorted(
+                    txtfiles,
+                    key=lambda x: frequencies[txtfiles.index(x)]
+                    )
+            frequencies = sorted(frequencies)
             uvb = uvbeam.UVBeam()
             uvb.read_cst_beam(
                 filename=txtfiles,
