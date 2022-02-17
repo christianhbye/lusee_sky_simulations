@@ -48,7 +48,6 @@ class Beam:
         self.E_field = simfits[0].data + 1j * simfits[1].data
         simfits.close()
         self.E_field /= 1e3  # convert mV to V
-        self.power = Efield_to_power(self.E_field, axis=3)
         self.frequencies = mk_linspace(
             header["freq_start"], header["freq_end"], step=header["freq_step"]
         )
@@ -59,7 +58,12 @@ class Beam:
         )
         self.phi = mk_linspace(
             header["phi_start"], header["phi_end"], step=header["phi_step"]
-        )
+        ) 
+        if np.allclose(self.E_field[:, :, 0], self.E_field[:, :, -1]):
+            assert np.isclose(self.phi[-1] - self.phi[0], 360)
+            self.E_field = self.E_field[:, :, :-1]  # drop phi = 360 deg
+            self.phi = self.phi[:-1]
+        self.power = Efield_to_power(self.E_field, axis=3)
 
     def plot_power(self, freq: float):
         freq_idx = np.argmin(np.abs(self.frequencies - freq))
@@ -90,12 +94,22 @@ class Beam:
         phi_idx = np.argmin(np.abs(self.phi - phi))
         plt.figure()
         plt.imshow(
-            self.power[:, :, phi_idx], interpolation="none"
-        )  # set extent
+            self.power[:, :, phi_idx],
+            interpolation="none",
+            aspect="auto",
+            extent=[
+                self.theta.min(),
+                self.theta.max(),
+                self.frequencies.max(),
+                self.frequencies.min()
+            ]
+        )
         plt.colorbar()  # units of V squared
-        plt.title(f"Power at $\\phi={self.phi[phi_idx]}$ MHz")
-        plt.xlabel("$\\nu$ [MHz]")
-        plt.ylabel("$\\theta$ [deg]")
+        plt.title("Power at $\\phi={:.0f}$ deg".format(self.phi[phi_idx]))
+        plt.ylabel("$\\nu$ [MHz]")
+        plt.xlabel("$\\theta$ [deg]")
+        cbar = plt.colorbar()
+        cbar.set_label("Power [$\\rm{V}^2$]")
         plt.show()
 
     def _flatten(self, beam_type: str = "power") -> np.ndarray:
