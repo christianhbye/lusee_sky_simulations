@@ -1,11 +1,10 @@
-from dataclasses import dataclass, field
 from astropy.io import fits  # type: ignore
+from dataclasses import dataclass, field
 import matplotlib.pyplot as plt
 import numpy as np
-from typing import Any
+from pathlib import Path
+from typing import Any, NoReturn
 import warnings
-
-# import to_uvbeam which makes a tmp txt file and calls read cst beam
 
 
 def mk_linspace(low: float, high: float, step: Any = 1) -> np.ndarray:
@@ -26,8 +25,10 @@ def mk_linspace(low: float, high: float, step: Any = 1) -> np.ndarray:
 def Efield_to_power(efield: np.ndarray, axis: int = 3) -> np.ndarray:
     """
     axis: the axis representing the x,yz-components. To be summed over.
+
+    returns beam in V
     """
-    return np.sum(np.abs(efield)**2, axis=axis)
+    return np.sqrt(np.sum(np.abs(efield)**2, axis=axis))
 
 
 @dataclass(frozen=True)
@@ -78,10 +79,66 @@ class Beam:
         plt.ylabel("$\\theta$ [deg]")
         plt.show()
 
+    def _flatten(self, beam_type: str = "power") -> np.ndarray:
+        """
+        Convert array with the shape (freq_size, th_size, ph_size) to a
+        2d-array of shape (freq_size, th_size*ph_size) where theta increases
+        faster than phi
+        """
+        if beam_type == "power":
+            arr = np.copy(self.power)
+        elif beam_type == "efield":
+            raise NotImplementedError
+        else:
+            raise ValueError("beam_type must be 'power' or 'efield'")
+        flat_array = arr.reshape(
+                self.frequencies.size,
+                self.theta.size*self.phi.size,
+                order="F"
+            )
+        return flat_array
+
+    def _write_txt_power(self, path: str = ".", verbose: bool = False) -> str:
+        beam2d = self._flatten()
+        savepath = path + "/tmp"
+        Path.mkdir(savepath)
+        if verbose:
+            print(f"Saving {len(beam2d)} files to {savepath}")
+        for i, freq in enumerate(frequencies):
+            np.savetxt(
+                    savepath+f"/{freq}.txt",
+                    np.column_stack((self.theta, self.phi, beam2d[i])),
+                    header="Theta [rad] Phi [rad] Abs(V) [V] \n\n",
+                    comments="",
+                )
+    def _delete_txt(path: str, verbose: bool = False) -> NoReturn:
+        Path.unlink(path+"/*.txt")
+        if verbose:
+            print("Deleting files.")
+        Path.rmdir(path)
+        if verbose:
+            print(f"Remove directory {path}.")
+
+    def to_uvbeam(self):
+        if beam_type == "power":
+            txtpath = self._write_txt_power()
+            uvb = uvbeam.UVBeam()
+            uvb.read_cst_beam(
+                    filename=txtpath,
+                    beam_type="power",
+                    feed_pol="x",
+                    rotate_pol=False,
+                    frequency=frequencies,
+                    telescope_name="lusee-night",
+                    feed_name="lusee",
+                    feed_version="1.0",
+                    model_name="monopole",
+                    model_version="1.0",
+                    history="003",
+                    x_orientation="north",
+                    reference_impedance=50
+                )
+            self._delete_txt(txtpath)
+        return to_uvb(self.data)
     
-    def to_uvbeam(self, save=True):
-        uvb = mpkg.to_uvbeam(self.data)
-        if save:
-            uvb.write_beamfits()
-        # import to_uvbeam which makes a tmp txt file and calls read cst beam
 
