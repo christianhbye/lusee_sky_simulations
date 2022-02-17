@@ -1,3 +1,5 @@
+# type: ignore
+
 from dataclasses import dataclass, field
 import numpy as np
 import numpy.typing as npt
