@@ -1,6 +1,5 @@
 from luseesky.utils import parse_fits as lpf
 import numpy as np
-from pathlib import Path
 import pytest
 
 
@@ -20,19 +19,7 @@ def test_mk_linspace():
         assert np.isclose(hi, arr.max())
 
 def test_flatten():
-    assert Path(
-            "AntennaSimResults/003_Freq1-50MHz_Delta1MHz_AntennaLength6m"
-            "_AntennaAngle30deg_LanderHeight2m"
-        ).exists()
-    assert Path(
-            "AntennaSimResults/003_Freq1-50MHz_Delta1MHz_AntennaLength6m"
-            "_AntennaAngle30deg_LanderHeight2m"
-        ).is_dir()
-    test_beam = lpf.Beam(
-            "AntennaSimResults/003_Freq1-50MHz_Delta1MHz_AntennaLength6m"
-            "_AntennaAngle30deg_LanderHeight2m/RadiatedElectricField_Antenna"
-            "Length6m_AntennaAngle30deg_LanderHeight2m_monopole.fits"
-            )
+    test_beam = lpf.Beam("luseesky/tests/beam.fits")
     flat_beam = test_beam._flatten(beam_type="power")
     th_size = test_beam.power.shape[1]
     ph_size = test_beam.power.shape[2]
