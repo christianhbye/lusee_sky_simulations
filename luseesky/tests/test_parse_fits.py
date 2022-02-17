@@ -44,6 +44,6 @@ def test_flatten():
     assert all(
         [
             np.allclose(flat_ph[::th_size], flat_ph[i::th_size])
-            for i in range(ph_size)
+            for i in range(th_size)
         ]
     )
