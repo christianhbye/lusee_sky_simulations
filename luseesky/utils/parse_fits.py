@@ -152,9 +152,13 @@ class Beam:
         if verbose:
             print(f"Remove directory {path}.")
 
-    def to_uvbeam(self, beam_type: str = "power") -> uvbeam.UVBeam:
+    def to_uvbeam(
+            self,
+            beam_type: str = "power",
+            verbose: bool = False
+    ) -> uvbeam.UVBeam:
         if beam_type == "power":
-            txtpath = self._write_txt_power()
+            txtpath = self._write_txt_power(verbose=verbose)
             txtfiles = [child.name for child in Path(txtpath).iterdir()]
             frequencies = [float(f[:-len(".txt")]) for f in txtfiles]
             uvb = uvbeam.UVBeam()
@@ -173,7 +177,7 @@ class Beam:
                 x_orientation="north",
                 reference_impedance=50,
             )
-            self._delete_txt(txtpath)
+            self._delete_txt(txtpath, verbose=verbose)
         elif beam_type == "efield":
             raise NotImplementedError
         else:
