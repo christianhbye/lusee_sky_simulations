@@ -33,9 +33,8 @@ def Efield_to_power(efield: np.ndarray, axis: int = 3) -> np.ndarray:
     return np.sqrt(np.sum(np.abs(efield) ** 2, axis=axis))
 
 
-@dataclass(frozen=True)
+@dataclass
 class Beam:
-    __slots__ = ["fname"]
     fname: str
     E_field: np.ndarray = field(init=False)
     power: np.ndarray = field(init=False)
@@ -46,7 +45,8 @@ class Beam:
     def __post_init__(self):
         simfits = fits.open(self.fname)
         header = simfits[0].header
-        self.E_field = fits[0].data + 1j * fits[2].data
+        self.E_field = simfits[0].data + 1j * simfits[1].data
+        simfits.close()
         self.power = Efield_to_power(self.E_field, axis=3)
         self.frequencies = mk_linspace(
             header["freq_start"], header["freq_end"], step=header["freq_step"]

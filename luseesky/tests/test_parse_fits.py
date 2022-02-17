@@ -20,12 +20,13 @@ def test_mk_linspace():
 
 def test_flatten():
     test_beam = lpf.Beam(
-            "../../AntennaSimResults/RadiatedElectricField_AntennaLength6m_"
-            "AntennaAngle30deg_LanderHeight2m_monopole.fits"
+            "../../AntennaSimResults/003_Freq1-50MHz_Delta1MHz_AntennaLength6m"
+            "_AntennaAngle30deg_LanderHeight2m/RadiatedElectricField_Antenna"
+            "Length6m_AntennaAngle30deg_LanderHeight2m_monopole.fits"
             )
     flat_beam = test_beam._flatten(beam_type="power")
-    th_size = test_beam.shape[1]
-    ph_size = test_beam.shape[2]
+    th_size = test_beam.power.shape[1]
+    ph_size = test_beam.power.shape[2]
     for phi in [0, 5, 45, 137]:  # fixed phi and frequency (=30)
         assert np.allclose(
                 test_beam.power[30, :, phi],
