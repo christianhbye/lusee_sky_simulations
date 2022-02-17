@@ -20,7 +20,7 @@ def test_mk_linspace():
 
 def test_flatten():
     test_beam = lpf.Beam("luseesky/tests/beam.fits")
-    flat_beam = test_beam._flatten(beam_type="power")
+    flat_beam, flat_th, flat_ph = test_beam._flatten(beam_type="power")
     th_size = test_beam.power.shape[1]
     ph_size = test_beam.power.shape[2]
     for phi in [0, 5, 45, 137]:  # fixed phi and frequency (=30)
@@ -33,4 +33,11 @@ def test_flatten():
                 test_beam.power[5, theta, :],
                 flat_beam[5, theta::th_size]
             )
-
+    assert all([
+        np.allclose(flat_th[:th_size],flat_th[i*th_size:(i+1)*th_size])
+        for i in range(ph_size)
+        ])  # flat theta repeats it self
+    assert all([
+        np.allclose(flat_ph[::th_size], flat_ph[i::th_size])
+        for i in range(ph_size)
+        ])

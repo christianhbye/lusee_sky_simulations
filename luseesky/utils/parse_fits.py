@@ -123,13 +123,19 @@ class Beam:
             raise NotImplementedError
         else:
             raise ValueError("beam_type must be 'power' or 'efield'")
-        flat_array = arr.reshape(
+        flat_beam = arr.reshape(
             self.frequencies.size, self.theta.size * self.phi.size, order="F"
         )
-        return flat_array
+        flat_theta = np.tile(self.theta, self.phi.size)
+        flat_phi = np.tile(self.phi, self.theta.size).reshape(
+                self.phi.size,
+                self.theta.size,
+                order="F"
+                ).flatten(order="C")
+        return flat_beam, flat_theta, flat_phi
 
     def _write_txt_power(self, path: str = ".", verbose: bool = False) -> str:
-        beam2d = self._flatten()
+        beam2d, th2d, ph2d = self._flatten()
         savepath = path + "/tmp"
         Path(savepath).mkdir()
         if verbose:
@@ -137,8 +143,8 @@ class Beam:
         for i, freq in enumerate(self.frequencies):
             np.savetxt(
                 savepath + f"/{freq}.txt",
-                np.column_stack((self.theta, self.phi, beam2d[i])),
-                header="Theta [rad] Phi [rad] Abs(V) [V] \n\n",
+                np.column_stack((th2d, ph2d, beam2d[i])),
+                header="Theta [deg] Phi [deg] Abs(V) [V] \n\n",
                 comments="",
             )
         return savepath
