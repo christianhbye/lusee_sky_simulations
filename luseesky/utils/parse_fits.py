@@ -75,7 +75,8 @@ class Beam:
                     self.theta.min()
                 ]
             )
-        plt.colorbar()  # units of V squared
+        cbar = plt.colorbar()
+        cbar.set_label("Power [$\\rm{V}^2$]")
         plt.title(
                 "Power at $\\nu={:.0f}$ MHz".format(
                     self.frequencies[freq_idx]
