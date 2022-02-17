@@ -109,9 +109,9 @@ class Beam:
         cbar.set_label("Power [$\\rm{V}^2$]")
         plt.show()
 
-    def _flatten(self, beam_type: str = "power") -> Tuple[
-            np.ndarray, np.ndarray, np.ndarray
-            ]:
+    def _flatten(
+        self, beam_type: str = "power"
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         Convert array with the shape (freq_size, th_size, ph_size) to a
         2d-array of shape (freq_size, th_size*ph_size) where theta increases
