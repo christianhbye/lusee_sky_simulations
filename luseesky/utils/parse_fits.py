@@ -69,8 +69,8 @@ class Beam:
         plt.xlabel("$\\theta$ [deg]")
         plt.ylabel("$\\phi$ [deg]")
         plt.show()
-    
-    def plot_beamcuts(self, phi: float = 0): -> NoReturn:
+
+    def plot_beamcuts(self, phi: float = 0) -> NoReturn:
         phi_idx = np.argmin(np.abs(self.phi - phi))
         plt.figure()
         plt.imshow(
@@ -144,7 +144,7 @@ class Beam:
                 x_orientation="north",
                 reference_impedance=50,
             )
-            _delete_txt(txtpath)
+            self._delete_txt(txtpath)
         elif beam_type == "efield":
             raise NotImplementedError
         else:
