@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt  # type: ignore
 import numpy as np
 from pathlib import Path
 from pyuvdata import uvbeam  # type: ignore
-from typing import Any, NoReturn
+from typing import Any
 import warnings
 
 
@@ -60,7 +60,7 @@ class Beam:
             header["phi_start"], header["phi_end"], step=header["phi_step"]
         )
 
-    def plot_power(self, freq: float) -> NoReturn:
+    def plot_power(self, freq: float):
         freq_idx = np.argmin(np.abs(self.frequencies - freq))
         plt.figure()
         plt.imshow(self.power[freq_idx], interpolation="none")  # set extent
@@ -70,7 +70,7 @@ class Beam:
         plt.ylabel("$\\phi$ [deg]")
         plt.show()
 
-    def plot_beamcuts(self, phi: float = 0) -> NoReturn:
+    def plot_beamcuts(self, phi: float = 0):
         phi_idx = np.argmin(np.abs(self.phi - phi))
         plt.figure()
         plt.imshow(
@@ -102,7 +102,7 @@ class Beam:
     def _write_txt_power(self, path: str = ".", verbose: bool = False) -> str:
         beam2d = self._flatten()
         savepath = path + "/tmp"
-        Path.mkdir(savepath)
+        Path(savepath).mkdir()
         if verbose:
             print(f"Saving {len(beam2d)} files to {savepath}")
         for i, freq in enumerate(self.frequencies):
@@ -115,7 +115,7 @@ class Beam:
         return savepath
 
     @staticmethod
-    def _delete_txt(path: str, verbose: bool = False) -> NoReturn:
+    def _delete_txt(path: str, verbose: bool = False):
         Path(path + "/*.txt").unlink()
         if verbose:
             print("Deleting files.")
