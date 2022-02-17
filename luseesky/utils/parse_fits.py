@@ -47,6 +47,7 @@ class Beam:
         header = simfits[0].header
         self.E_field = simfits[0].data + 1j * simfits[1].data
         simfits.close()
+        self.E_field /= 1e3  # convert mV to V
         self.power = Efield_to_power(self.E_field, axis=3)
         self.frequencies = mk_linspace(
             header["freq_start"], header["freq_end"], step=header["freq_step"]
