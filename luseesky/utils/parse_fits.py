@@ -63,11 +63,25 @@ class Beam:
     def plot_power(self, freq: float):
         freq_idx = np.argmin(np.abs(self.frequencies - freq))
         plt.figure()
-        plt.imshow(self.power[freq_idx], interpolation="none")  # set extent
+        plt.imshow(
+                self.power[freq_idx],
+                interpolation="none",
+                aspect="auto",
+                extent=[
+                    self.phi.min(),
+                    self.phi.max(),
+                    self.theta.max(),
+                    self.theta.min()
+                ]
+            )
         plt.colorbar()  # units of V squared
-        plt.title(f"Power at $\\nu={self.frequencies[freq_idx]}$ MHz")
-        plt.xlabel("$\\theta$ [deg]")
-        plt.ylabel("$\\phi$ [deg]")
+        plt.title(
+                "Power at $\\nu={:.0f}$ MHz".format(
+                    self.frequencies[freq_idx]
+                    )
+                )
+        plt.xlabel("$\\phi$ [deg]")
+        plt.ylabel("$\\theta$ [deg]")
         plt.show()
 
     def plot_beamcuts(self, phi: float = 0):
