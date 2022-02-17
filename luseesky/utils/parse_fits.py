@@ -79,7 +79,7 @@ class Beam:
                 self.theta.min(),
             ],
         )
-        cbar = plt.colorbar("Power [V]")
+        plt.colorbar(label="Power [V]")
         plt.title(
             "Power at $\\nu={:.0f}$ MHz".format(self.frequencies[freq_idx])
         )
@@ -104,7 +104,7 @@ class Beam:
         plt.title("Power at $\\phi={:.0f}$ deg".format(self.phi[phi_idx]))
         plt.ylabel("$\\nu$ [MHz]")
         plt.xlabel("$\\theta$ [deg]")
-        cbar = plt.colorbar("Power [V]")
+        plt.colorbar(label="Power [V]")
         plt.show()
 
     def _flatten(
