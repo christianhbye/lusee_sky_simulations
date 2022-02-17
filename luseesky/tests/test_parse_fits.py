@@ -20,7 +20,14 @@ def test_mk_linspace():
         assert np.isclose(hi, arr.max())
 
 def test_flatten():
-    assert Path("AntennaSimResults").exists()
+    assert Path(
+            "AntennaSimResults/003_Freq1-50MHz_Delta1MHz_AntennaLength6m"
+            "_AntennaAngle30deg_LanderHeight2m"
+        ).exists()
+    assert Path(
+            "AntennaSimResults/003_Freq1-50MHz_Delta1MHz_AntennaLength6m"
+            "_AntennaAngle30deg_LanderHeight2m"
+        ).is_dir()
     test_beam = lpf.Beam(
             "AntennaSimResults/003_Freq1-50MHz_Delta1MHz_AntennaLength6m"
             "_AntennaAngle30deg_LanderHeight2m/RadiatedElectricField_Antenna"
