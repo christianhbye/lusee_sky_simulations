@@ -188,6 +188,7 @@ class Beam:
                 x_orientation="north",
                 reference_impedance=50,
             )
+            uvb.interpolation_function = "az_za_simple"
             self._delete_txt(txtpath, verbose=verbose)
         elif beam_type == "efield":
             raise NotImplementedError
