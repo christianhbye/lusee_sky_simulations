@@ -1,0 +1,18 @@
+version: 2
+updates:
+
+  - package-ecosystem: "pip"
+    directory: "/luseesky" # Location of package manifests
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "github-actions"
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+
+
+  - package-ecosystem: "gitsubmodule"
+    directory: "/luseesky" # Location of package manifests
+    schedule:
+      interval: "daily"
