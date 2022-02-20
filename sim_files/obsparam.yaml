@@ -17,3 +17,5 @@ time:
   Ntimes: 256
   start_time: 2459630.
   duration_days: 1.
+select:
+  bls: '[(0,0)]'

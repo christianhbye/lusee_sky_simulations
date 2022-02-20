@@ -1,5 +1,9 @@
 beam_paths:
-  0: '../luseesky/uvbeams/003/RadiatedElectricField_AntennaLength6m_AntennaAngle30deg_LanderHeight2m_Phase+0deg.uvbeam'
+  0: ../luseesky/uvbeams/003/RadiatedElectricField_AntennaLength6m_AntennaAngle30deg_LanderHeight2m_Phase+0deg.uvbeam
+  
+  1:
+    type: airy
+    diameter: 16
 
 freq_interp_kind: 'linear'
 telescope_location: (0.6875, 24.433, 0)
