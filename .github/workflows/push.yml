@@ -18,7 +18,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          sudo apt install libopenmpi-dev  # needed for mpi4py 
+          brew install mpich  # needed for mpi4py 
           python -m pip install --upgrade pip
           python -m pip install wheel
           python -m pip install .[dev]
