@@ -1,0 +1,11 @@
+(3) Best to just finish notebook pipeline first maybe.
+
+
+(1) Need to figure out layout.csv and uvbeam.yaml files in sim_files. It seems like pyuvsim doesn't allow one antenna only (check Aaron's repo for his force).
+UPDATE: it seems like the uvdata_select should work fine. Just add a throwout antenna and select the autocorrelation of our beam. TEST: that the throwaway antenna indeed does not matter for the results of the autocorrelation (would be very weird if it did...)
+
+
+(2) Should be easy to read ULSA skymodel to pyuvdata like vis_cpu suggests (each NPIX is just a source on the sky)
+
+
+(4) Need really to be able to convert E-field beams to uvdata. Tests for Anze.

@@ -1,19 +1,21 @@
 filing:
-  outdir: '/home/christian/Documents/research/lusee/lusee_sky_simulations/results_data/'
-  outfile_name: 'test'
-  output_format: 'uvh5'
+  outdir: '/home/christian/Documents/research/lusee/lusee_sky_simulations/sim_files/'
+  outfile_name: 'uvsim'
+  output_format: 'uvfits'
 freq:
-  Nfreqs: 1
-  start_freq: 10000000.0
-  end_freq: 10000000.0
-  bandwidth: 10000.0
+  Nfreqs: 50
+  start_freq: 1000000.0
+  end_freq: 50000000.0
+  channel_width: 1000000.0
 sources:
-  catalog: '/home/christian/Documents/research/lusee/pyuvsim/reference_simulations/first_generation/catalog_files/letter_R_12pt_2458098.38824015.txt'
-  min_flux: 0.05
+  catalog: '/home/christian/Documents/research/lusee/lusee_sky_simulations/.venv/lib/python3.8/site-packages/pyuvsim/data/gleam_50srcs.vot'
+  spectral_type: flat
 telescope:
-  array_layout: '/home/christian/Documents/research/lusee/lusee_sky_simulations/mwa_nocore_layout.csv'
-  telescope_config_name: '/home/christian/Documents/research/lusee/lusee_sky_simulations/uvbeam.yaml'
+  array_layout: './layout.csv'
+  telescope_config_name: './uvbeam.yaml'
 time:
-  Ntimes: 1
-  integration_time: 60
-  start_time: 2458116.24485307
+  Ntimes: 256
+  start_time: 2459630.
+  duration_days: 1.
+select:
+  bls: '[(0,0)]'
