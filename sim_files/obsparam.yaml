@@ -4,9 +4,9 @@ filing:
   output_format: 'uvfits'
 freq:
   Nfreqs: 50
-  start_freq: 1.0e6
-  end_freq: 50.0e6
-  channel_width: 1.0e6
+  start_freq: 1000000.0
+  end_freq: 50000000.0
+  channel_width: 1000000.0
 sources:
   catalog: '/home/christian/Documents/research/lusee/lusee_sky_simulations/.venv/lib/python3.8/site-packages/pyuvsim/data/gleam_50srcs.vot'
   spectral_type: flat
@@ -16,4 +16,4 @@ telescope:
 time:
   Ntimes: 256
   start_time: 2459630.
-  duartion_days: 1.
+  duration_days: 1.
