@@ -1,0 +1,10 @@
+(1) Best to just finish notebook pipeline first maybe.
+
+
+(2) Need to figure out layout.csv and uvbeam.yaml files in sim_files. It seems like pyuvsim doesn't allow one antenna only (check Aaron's repo for his force).
+
+
+(3) Should be easy to read ULSA skymodel to pyuvdata like vis_cpu suggests (each NPIX is just a source on the sky)
+
+
+(4) Need really to be able to convert E-field beams to uvdata. Tests for Anze.
