@@ -10,4 +10,6 @@ UPDATE: it seems like the uvdata_select should work fine. Just add a throwout an
 (4) Understand E_z and the conditon that E dot r = 0 in the farfield (dipole
 radiation). It looks like the condition isn't satisfied for these antenna sims.
 
-(5) Tests for Anze.
+(5) Do some 21-cm simulations
+
+(6) Tests for Anze.
