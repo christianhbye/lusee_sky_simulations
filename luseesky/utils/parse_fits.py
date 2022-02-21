@@ -212,7 +212,7 @@ class Beam:
             uvb.antenna_type = "simple"
             uvb.Nfreqs = self.frequencies.size
             uvb.Nspws = 1
-            uvb.freq_array = self.frequencies.reshape(1, -1)
+            uvb.freq_array = self.frequencies.reshape(1, -1) * 1e6
             uvb.bandpass_array = np.zeros_like(uvb.freq_array)
             uvb.spw_array = np.array([0])
             uvb.pixel_coordinate_system = "az_za"
