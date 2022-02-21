@@ -160,11 +160,13 @@ class Beam:
             print(f"Remove directory {path}.")
 
     def to_uvbeam(
-        self, beam_type: str = "power", verbose: bool = False
+        self, beam_type: str = "E_field", verbose: bool = False
     ) -> uvbeam.UVBeam:
         uvb = uvbeam.UVBeam()
         uvb.interpolation_function = "az_za_simple"
         if beam_type == "power":
+            if verbose:
+                print("Making UVBeam object from power beam.")
             txtpath = self._write_txt_power(verbose=verbose)
             txtfiles = [str(child) for child in Path(txtpath).iterdir()]
             frequencies = [
@@ -191,6 +193,8 @@ class Beam:
             )
             self._delete_txt(txtpath, verbose=verbose)
         elif beam_type == "E_field":
+            if verbose:
+                print("Making UVBeam object from E-field beam.")
             uvb.filename = [Path(self.fname).name]
             uvb._filename.form = (1,)
             uvb.telescope_name = "lusee-night"
