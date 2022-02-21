@@ -50,7 +50,7 @@ class Beam:
         self.E_field /= 1e3  # convert mV to V
         self.frequencies = mk_linspace(
             header["freq_start"], header["freq_end"], step=header["freq_step"]
-        )
+        )  # in MHz
         self.theta = mk_linspace(
             header["theta_start"],
             header["theta_end"],
@@ -165,7 +165,7 @@ class Beam:
             txtpath = self._write_txt_power(verbose=verbose)
             txtfiles = [str(child) for child in Path(txtpath).iterdir()]
             frequencies = [
-                    float(Path(f).name[: -len(".txt")]) for f in txtfiles
+                    1e6*float(Path(f).name[: -len(".txt")]) for f in txtfiles
                 ]
             txtfiles = sorted(
                     txtfiles,
