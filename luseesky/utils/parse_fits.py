@@ -163,7 +163,6 @@ class Beam:
         self, beam_type: str = "E_field", verbose: bool = False
     ) -> uvbeam.UVBeam:
         uvb = uvbeam.UVBeam()
-        uvb.interpolation_function = "az_za_simple"
         if beam_type == "power":
             if verbose:
                 print("Making UVBeam object from power beam.")
@@ -190,6 +189,7 @@ class Beam:
                 history="003",
                 reference_impedance=50,
             )
+            uvb.interpolation_function = "az_za_simple"
             self._delete_txt(txtpath, verbose=verbose)
         elif beam_type == "E_field":
             if verbose:
@@ -236,6 +236,7 @@ class Beam:
             uvb.data_array[2, 0, 0] = self.E_field[:, :, :, 2]
             uvb.bandpass_array[0] = 1
             uvb.check(check_extra=True, run_check_acceptability=False)
+            uvb.interpolation_function = "az_za_simple"
         else:
             raise ValueError("beam_type must be 'power' or 'E_field'")
         return uvb
