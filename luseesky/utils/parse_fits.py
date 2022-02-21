@@ -187,14 +187,22 @@ class Beam:
                 model_name="monopole",
                 model_version="1.0",
                 history="003",
-                x_orientation="north",
                 reference_impedance=50,
             )
             self._delete_txt(txtpath, verbose=verbose)
         elif beam_type == "E_field":
+            uvb.filename = [Path(self.fname).name]
+            uvb._filename.form = (1,)
+            uvb.telescope_name = "lusee-night"
+            uvb.feed_name = "lusee"
+            uvb.feed_version = "1.0"
+            uvb.model_name = "monopole"
+            uvb.model_version = "1.0"
+            uvb.history = "003" + uvb.pyuvdata_version_str
+            uvb.reference_impedance = 50.
             uvb.Naxes_vec = 3
-            uvb.Ncomponents_vec = 
-            uvb.feed_array = np.array([])
+            uvb.Ncomponents_vec = 3
+            uvb.feed_array = np.array(["x"])
             uvb.Nfeeds = uvb.feed_array.size
             uvb._set_efield()
             uvb.data_normalization = "physical"
@@ -202,7 +210,7 @@ class Beam:
             uvb.Nfreqs = self.frequencies.size
             uvb.Nspws = 1
             uvb.freq_array = self.frequencies.reshape(1, -1)
-            uvb.bandpass_array = np.empty_like(uvb.freq_array)
+            uvb.bandpass_array = np.zeros_like(uvb.freq_array)
             uvb.spw_array = np.array([0])
             uvb.pixel_coordinate_system = "az_za"
             uvb._set_cs_params()
@@ -214,7 +222,7 @@ class Beam:
                     uvb._data_array.expected_shape(uvb),
                     dtype="complex128"
                     )
-            uvb.basis_vector_array = np.empty(
+            uvb.basis_vector_array = np.zeros(
                     uvb.Naxes_vec,
                     uvb.Ncomponents_vec,
                     uvb.Naxes2,
@@ -222,11 +230,13 @@ class Beam:
                     )
             uvb.basis_vector_array[0, 0] = 1.
             uvb.basis_vector_array[1, 1] = 1.
+            uvb.basis_vector_array[2, 2] = 1.
             # data_array: [x,y,z], 0, [feed/pol], freq, theta, phi
             uvb.data_array[0, 0, 0] = self.E_field[:, :, :, 0]
             uvb.data_array[1, 0, 0] = self.E_field[:, :, :, 1]
             uvb.data_array[2, 0, 0] = self.E_field[:, :, :, 2]
-
+            uvb.bandpass_array[0] = 1
+            uvb.check(check_extra=True, run_check_acceptability=False)
         else:
             raise ValueError("beam_type must be 'power' or 'E_field'")
         return uvb
