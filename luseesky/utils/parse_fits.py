@@ -30,6 +30,7 @@ def Efield_to_power(efield: np.ndarray, axis: int = 3) -> np.ndarray:
 
     returns beam in V
     """
+
     return np.sqrt(np.sum(np.abs(efield) ** 2, axis=axis))
 
 
@@ -50,7 +51,7 @@ class Beam:
         self.E_field /= 1e3  # convert mV to V
         self.frequencies = mk_linspace(
             header["freq_start"], header["freq_end"], step=header["freq_step"]
-        )
+        )  # in MHz
         self.theta = mk_linspace(
             header["theta_start"],
             header["theta_end"],
@@ -117,10 +118,10 @@ class Beam:
         """
         if beam_type == "power":
             arr = np.copy(self.power)
-        elif beam_type == "efield":
-            raise NotImplementedError
+        elif beam_type == "E_field":
+            raise NotImplementedError("Might add E_field support later.")
         else:
-            raise ValueError("beam_type must be 'power' or 'efield'")
+            raise ValueError("beam_type must be 'power' or 'E_field'")
         flat_beam = arr.reshape(
             self.frequencies.size, self.theta.size * self.phi.size, order="F"
         )
@@ -159,20 +160,21 @@ class Beam:
             print(f"Remove directory {path}.")
 
     def to_uvbeam(
-        self, beam_type: str = "power", verbose: bool = False
+        self, beam_type: str = "E_field", verbose: bool = False
     ) -> uvbeam.UVBeam:
+        uvb = uvbeam.UVBeam()
         if beam_type == "power":
+            if verbose:
+                print("Making UVBeam object from power beam.")
             txtpath = self._write_txt_power(verbose=verbose)
             txtfiles = [str(child) for child in Path(txtpath).iterdir()]
             frequencies = [
-                    float(Path(f).name[: -len(".txt")]) for f in txtfiles
-                ]
+                1e6 * float(Path(f).name[: -len(".txt")]) for f in txtfiles
+            ]
             txtfiles = sorted(
-                    txtfiles,
-                    key=lambda x: frequencies[txtfiles.index(x)]
-                    )
+                txtfiles, key=lambda x: frequencies[txtfiles.index(x)]
+            )
             frequencies = sorted(frequencies)
-            uvb = uvbeam.UVBeam()
             uvb.read_cst_beam(
                 filename=txtfiles,
                 beam_type="power",
@@ -185,13 +187,56 @@ class Beam:
                 model_name="monopole",
                 model_version="1.0",
                 history="003",
-                x_orientation="north",
                 reference_impedance=50,
             )
             uvb.interpolation_function = "az_za_simple"
             self._delete_txt(txtpath, verbose=verbose)
-        elif beam_type == "efield":
-            raise NotImplementedError
+        elif beam_type == "E_field":
+            if verbose:
+                print("Making UVBeam object from E-field beam.")
+            uvb.filename = [Path(self.fname).name]
+            uvb._filename.form = (1,)
+            uvb.telescope_name = "lusee-night"
+            uvb.feed_name = "lusee"
+            uvb.feed_version = "1.0"
+            uvb.model_name = "monopole"
+            uvb.model_version = "1.0"
+            uvb.history = "003" + uvb.pyuvdata_version_str
+            uvb.reference_impedance = 50.0
+            uvb.Naxes_vec = 3
+            uvb.Ncomponents_vec = 3
+            uvb.feed_array = np.array(["x"])
+            uvb.Nfeeds = uvb.feed_array.size
+            uvb._set_efield()
+            uvb.data_normalization = "physical"
+            uvb.antenna_type = "simple"
+            uvb.Nfreqs = self.frequencies.size
+            uvb.Nspws = 1
+            uvb.freq_array = self.frequencies.reshape(1, -1) * 1e6
+            uvb.bandpass_array = np.zeros_like(uvb.freq_array)
+            uvb.spw_array = np.array([0])
+            uvb.pixel_coordinate_system = "az_za"
+            uvb._set_cs_params()
+            uvb.axis1_array = np.radians(self.phi)
+            uvb.Naxes1 = uvb.axis1_array.size
+            uvb.axis2_array = np.radians(self.theta)
+            uvb.Naxes2 = uvb.axis2_array.size
+            uvb.data_array = np.empty(
+                uvb._data_array.expected_shape(uvb), dtype="complex128"
+            )
+            uvb.basis_vector_array = np.zeros(
+                (uvb.Naxes_vec, uvb.Ncomponents_vec, uvb.Naxes2, uvb.Naxes1)
+            )
+            uvb.basis_vector_array[0, 0] = 1.0
+            uvb.basis_vector_array[1, 1] = 1.0
+            uvb.basis_vector_array[2, 2] = 1.0
+            # data_array: [x,y,z], 0, [feed/pol], freq, theta, phi
+            uvb.data_array[0, 0, 0] = self.E_field[:, :, :, 0]
+            uvb.data_array[1, 0, 0] = self.E_field[:, :, :, 1]
+            uvb.data_array[2, 0, 0] = self.E_field[:, :, :, 2]
+            uvb.bandpass_array[0] = 1
+            uvb.check(check_extra=True, run_check_acceptability=False)
+            uvb.interpolation_function = "az_za_simple"
         else:
-            raise ValueError("beam_type must be 'power' or 'efield'")
+            raise ValueError("beam_type must be 'power' or 'E_field'")
         return uvb
