@@ -8,8 +8,7 @@ freq:
   end_freq: 50000000.0
   channel_width: 1000000.0
 sources:
-  catalog: '/home/christian/Documents/research/lusee/lusee_sky_simulations/.venv/lib/python3.8/site-packages/pyuvsim/data/gleam_50srcs.vot'
-  spectral_type: flat
+  catalog: './mock_zenith.skyh5'
 telescope:
   array_layout: './layout.csv'
   telescope_config_name: './uvbeam.yaml'
@@ -18,4 +17,4 @@ time:
   start_time: 2459630.
   duration_days: 1.
 select:
-  bls: '[(0,0)]'
+  bls: '[(0, 0)]'
