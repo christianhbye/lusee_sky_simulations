@@ -170,12 +170,11 @@ class Beam:
             txtpath = self._write_txt_power(verbose=verbose)
             txtfiles = [str(child) for child in Path(txtpath).iterdir()]
             frequencies = [
-                    1e6*float(Path(f).name[: -len(".txt")]) for f in txtfiles
-                ]
+                1e6 * float(Path(f).name[: -len(".txt")]) for f in txtfiles
+            ]
             txtfiles = sorted(
-                    txtfiles,
-                    key=lambda x: frequencies[txtfiles.index(x)]
-                    )
+                txtfiles, key=lambda x: frequencies[txtfiles.index(x)]
+            )
             frequencies = sorted(frequencies)
             uvb.read_cst_beam(
                 filename=txtfiles,
@@ -203,7 +202,7 @@ class Beam:
             uvb.model_name = "monopole"
             uvb.model_version = "1.0"
             uvb.history = "003" + uvb.pyuvdata_version_str
-            uvb.reference_impedance = 50.
+            uvb.reference_impedance = 50.0
             uvb.Naxes_vec = 3
             uvb.Ncomponents_vec = 3
             uvb.feed_array = np.array(["x"])
@@ -223,18 +222,14 @@ class Beam:
             uvb.axis2_array = self.theta
             uvb.Naxes2 = uvb.axis2_array.size
             uvb.data_array = np.empty(
-                    uvb._data_array.expected_shape(uvb),
-                    dtype="complex128"
-                    )
+                uvb._data_array.expected_shape(uvb), dtype="complex128"
+            )
             uvb.basis_vector_array = np.zeros(
-                    uvb.Naxes_vec,
-                    uvb.Ncomponents_vec,
-                    uvb.Naxes2,
-                    uvb.Naxes1
-                    )
-            uvb.basis_vector_array[0, 0] = 1.
-            uvb.basis_vector_array[1, 1] = 1.
-            uvb.basis_vector_array[2, 2] = 1.
+                (uvb.Naxes_vec, uvb.Ncomponents_vec, uvb.Naxes2, uvb.Naxes1)
+            )
+            uvb.basis_vector_array[0, 0] = 1.0
+            uvb.basis_vector_array[1, 1] = 1.0
+            uvb.basis_vector_array[2, 2] = 1.0
             # data_array: [x,y,z], 0, [feed/pol], freq, theta, phi
             uvb.data_array[0, 0, 0] = self.E_field[:, :, :, 0]
             uvb.data_array[1, 0, 0] = self.E_field[:, :, :, 1]
