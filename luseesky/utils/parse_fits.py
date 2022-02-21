@@ -217,9 +217,9 @@ class Beam:
             uvb.spw_array = np.array([0])
             uvb.pixel_coordinate_system = "az_za"
             uvb._set_cs_params()
-            uvb.axis1_array = self.phi
+            uvb.axis1_array = np.radians(self.phi)
             uvb.Naxes1 = uvb.axis1_array.size
-            uvb.axis2_array = self.theta
+            uvb.axis2_array = np.radians(self.theta)
             uvb.Naxes2 = uvb.axis2_array.size
             uvb.data_array = np.empty(
                 uvb._data_array.expected_shape(uvb), dtype="complex128"
