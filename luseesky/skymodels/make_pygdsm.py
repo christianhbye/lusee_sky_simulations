@@ -1,3 +1,5 @@
+# type: ignore
+
 from astropy.coordinates import Galactic
 from astropy_healpix import HEALPix
 from astropy import units as u
