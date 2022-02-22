@@ -17,9 +17,10 @@ hp = HEALPix(nside=NSIDE, order="ring", frame=Galactic())
 assert hp.npix == NPIX
 coords = hp.healpix_to_skycoord(HPX_INDS).transform_to("icrs")
 ra, dec = coords.ra, coords.dec
+# some mock stokes params assuming Ex == Ey
 stokes = u.Quantity(np.zeros((4, 1, NPIX)), unit=u.K)
 stokes[0, 0] = gsm.generated_map_data * u.K  # set I to the GDSM Temp
-
+stokes[2, 0] = stokes[0, 0]  # U = I, Q=V=0
 print("Convert to pyradiosky SkyModel.")
 skymodel = pyradiosky.SkyModel()
 skymodel.Ncomponents = NPIX
