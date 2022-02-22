@@ -2,3 +2,5 @@ uvbeams/
 notebooks/.ipynb_checkpoints
 .venv/
 *__pycache__/
+luseesky/utils/ULSA/*
+!luseesky/utils/ULSA/make_ULSA.py
