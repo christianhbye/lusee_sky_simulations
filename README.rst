@@ -27,15 +27,6 @@ Then, set the enviornment variables for :code:`ifort`:
 
   source ~/intel/oneapi/setvars.sh
   
-Add the LD_LIBRARY_PATH environment variable to the Jupyter kernel for use in a Jupyter Notebook (https://stackoverflow.com/questions/37890898/how-to-set-env-variable-in-jupyter-notebook):
-
-.. code:: bash
-
-  jupyter kernelspec list  # find which kernel is related to the .venv virtual env. Might have to add one manually
-  cd ~/.local/share/jupyter/kernels/.venv  # this is where my kernel is
-  vim kernel.json
-  
-In the file kernel.json, add the key "env" with the value :code:`{"LD_LIBRARY_PATH": <library path>}` and set :code:`<library path>` to the desired value (I just copy-pasted the output of :code:`echo $LD_LIBRARY_PATH`).
 
 Now, make the shared library (.so) file:
 
