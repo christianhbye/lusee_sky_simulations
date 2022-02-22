@@ -41,5 +41,9 @@ assert skymodel.check()
 
 print("Convert to effective point sources.")
 skymodel.healpix_to_point()
+print("Filter to just the brightest sources.")
+# the brightest sources has greatest stokes I
+comp_ind = np.argsort(stokes[0, 0])[-50:]  # 100 brightest
+skymodel.select(comp_ind, inplace=True)
 print("Save catalog to text.")
 skymodel.write_text_catalog("./pygdsm16_srcs.txt")
