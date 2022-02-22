@@ -5,3 +5,6 @@ notebooks/.ipynb_checkpoints
 luseesky/utils/ULSA/*
 !luseesky/utils/ULSA/make_ULSA.py
 luseesky/skymodels/*.txt
+*.npz
+*.h5
+*.skyh5
