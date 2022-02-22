@@ -8,7 +8,36 @@ To install:
   source .venv/bin/activate
   python -m pip install .  # use .[dev] to get extra developer dependencies
 
-Note: One of the dependencies is ULSA which requires a specific installation. After running the above commands, do the following to make ULSA work:
+After running the above commands, do the following to make ULSA work:
+
+Download the Intel Fortran compiler from: https://www.intel.com/content/www/us/en/developer/articles/tool/oneapi-standalone-components.html#fortran.
+Then:
+
+.. code:: bash
+
+  cd ~/Downloads
+  chmod u+rwx l_fortran-compiler_p_2022.0.2.83.sh  # makes the bash file exectuable
+  ./l_fortran-compiler_p_2022.0.2.83.sh
+ 
+This should open the Intel installer GUI. Follow the instructions.
+
+Then, set the enviornment variables for :code:`ifort`:
+
+.. code:: bash
+
+  source ~/intel/oneapi/setvars.sh
+  
+Add the LD_LIBRARY_PATH environment variable to the Jupyter kernel for use in a Jupyter Notebook (https://stackoverflow.com/questions/37890898/how-to-set-env-variable-in-jupyter-notebook):
+
+.. code:: bash
+
+  jupyter kernelspec list  # find which kernel is related to the .venv virtual env. Might have to add one manually
+  cd ~/.local/share/jupyter/kernels/.venv  # this is where my kernel is
+  vim kernel.json
+  
+In the file kernel.json, add the key "env" with the value :code:`{"LD_LIBRARY_PATH": <library path>}` and set :code:`<library path>` to the desired value (I just copy-pasted the output of :code:`echo $LD_LIBRARY_PATH`).
+
+Now, make the shared library (.so) file:
 
 .. code:: bash
 
