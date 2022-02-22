@@ -5,7 +5,7 @@ import numpy as np
 from pygdsm import GlobalSkyModel2016
 import pyradiosky
 
-
+print("Generate GSM.")
 REF_FREQ = 25  # MHz
 gsm = GlobalSkyModel2016(freq_unit='MHz')
 gsm.generate(REF_FREQ)
@@ -20,6 +20,7 @@ ra, dec = coords.ra, coords.dec
 stokes = u.Quantity(np.zeros((4, 1, NPIX)), unit=u.K)
 stokes[0, 0] = gsm.generated_map_data * u.K  # set I to the GDSM Temp
 
+print("Convert to pyradiosky SkyModel.")
 skymodel = pyradiosky.SkyModel()
 skymodel.Ncomponents = NPIX
 skymodel.Nfreqs = 1
@@ -38,6 +39,7 @@ skymodel.reference_frequency = REF_FREQ * np.ones(NPIX) * u.MHz
 skymodel.spectral_index = -2.5 * np.ones(NPIX)
 assert skymodel.check()
 
+print("Convert to effective point sources.")
 skymodel.healpix_to_point()
-
+print("Save catalog to text.")
 skymodel.write_text_catalog("./pygdsm16_srcs.txt")
