@@ -1,3 +1,5 @@
+# type: ignore
+
 from astropy.io import fits
 import numpy as np
 from ULSA.sky_map.produce_absorbed_sky_map import absorption_JRZ
