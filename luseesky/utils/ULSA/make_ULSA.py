@@ -30,6 +30,8 @@ sky_map = absorption_JRZ(
         output_absorp_free_skymap=OUT_FREE
 )
 
+sky_map.mpi()
+
 save_params = {
         "freqs_MHz": FREQ,
         "nside": NSIDE,
