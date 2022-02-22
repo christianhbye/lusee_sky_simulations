@@ -203,9 +203,9 @@ class Beam:
             uvb.model_version = "1.0"
             uvb.history = "003" + uvb.pyuvdata_version_str
             uvb.reference_impedance = 50.0
-            uvb.Naxes_vec = 3
-            uvb.Ncomponents_vec = 3
-            uvb.feed_array = np.array(["x"])
+            uvb.Naxes_vec = 2
+            uvb.Ncomponents_vec = 2
+            uvb.feed_array = np.array(["x", "y"])
             uvb.Nfeeds = uvb.feed_array.size
             uvb._set_efield()
             uvb.data_normalization = "physical"
@@ -221,7 +221,7 @@ class Beam:
             uvb.Naxes1 = uvb.axis1_array.size
             uvb.axis2_array = np.radians(self.theta)
             uvb.Naxes2 = uvb.axis2_array.size
-            uvb.data_array = np.empty(
+            uvb.data_array = np.zeros(
                 uvb._data_array.expected_shape(uvb), dtype="complex128"
             )
             uvb.basis_vector_array = np.zeros(
@@ -229,11 +229,9 @@ class Beam:
             )
             uvb.basis_vector_array[0, 0] = 1.0
             uvb.basis_vector_array[1, 1] = 1.0
-            uvb.basis_vector_array[2, 2] = 1.0
-            # data_array: [x,y,z], 0, [feed/pol], freq, theta, phi
+            # data_array: [x,y], 0, [feed/pol], freq, theta, phi
             uvb.data_array[0, 0, 0] = self.E_field[:, :, :, 0]
-            uvb.data_array[1, 0, 0] = self.E_field[:, :, :, 1]
-            uvb.data_array[2, 0, 0] = self.E_field[:, :, :, 2]
+            uvb.data_array[1, 0, 1] = self.E_field[:, :, :, 1]
             uvb.bandpass_array[0] = 1
             uvb.check(check_extra=True, run_check_acceptability=False)
             uvb.interpolation_function = "az_za_simple"
