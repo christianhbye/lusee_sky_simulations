@@ -1,6 +1,5 @@
 # type: ignore
 
-# import h5py
 import numpy as np
 from pyuvsim import uvsim
 
@@ -22,6 +21,3 @@ save_dict = {
 }
 
 np.savez("./results", **save_dict)
-
-#with h5py.File("./results.h5", "w") as hf:
-#    hf.create_dataset("uvdata", data=save_dict)
