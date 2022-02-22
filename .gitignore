@@ -4,3 +4,4 @@ notebooks/.ipynb_checkpoints
 *__pycache__/
 luseesky/utils/ULSA/*
 !luseesky/utils/ULSA/make_ULSA.py
+luseesky/skymodels/*.txt
