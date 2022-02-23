@@ -2,14 +2,14 @@ from luseesky import __path__
 import numpy as np
 from pathlib import Path
 from pyuvsim import uvsim  # type: ignore
-from .simsetup import gen_uvbdict, gen_obsparams
+from luseesky.simsetup import gen_uvbdict, gen_obsparams
 
 LPATH = __path__[0]
 
 
 def run(outpath: str):
     uvd = uvsim.run_uvsim(
-        LPATH + "/sim_files.obsparam.yaml", return_uv=True, quiet=False
+        LPATH + "/sim_files/obsparam.yaml", return_uv=True, quiet=False
     )
     max_imag = np.max(np.abs(uvd.data_array.imag))
     # print(f"{max_imag=}")
@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     DIR = args.dir
 
-    RESDIR = LPATH + "results/" + DIR[len("uvbeams/AntennaSimResults/") :]
+    RESDIR = LPATH + "/results/" + DIR[len("uvbeams/AntennaSimResults/") :]
     assert "results/Ant" in RESDIR  # checking that joining the dirname works
     rp = Path(RESDIR)
     if not rp.is_dir():
