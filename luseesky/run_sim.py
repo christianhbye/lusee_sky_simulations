@@ -1,6 +1,6 @@
 import numpy as np
 from pathlib import Path
-from pyuvsim import uvsim
+from pyuvsim import uvsim  # type: ignore
 from .simsetup import gen_uvbdict, gen_obsparams
 
 def run(outpath: str):
