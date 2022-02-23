@@ -13,8 +13,8 @@ telescope:
   array_layout: './layout.csv'
   telescope_config_name: './uvbeam.yaml'
 time:
-  Ntimes: 7680.
+  Ntimes: 7680
   start_time: 2459630.
-  duration_days: 30.
+  duration_days: 30
 select:
   bls: '[(0, 0)]'
