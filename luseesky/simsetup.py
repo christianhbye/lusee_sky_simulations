@@ -1,8 +1,10 @@
-from luseesky import __path__
+# from luseesky import __path__
 from pathlib import Path
 import yaml  # type: ignore
 
-LPATH = __path__[0]
+# LPATH = __path__[0]
+LPATH = ("/home/christian/Documents/research/lusee/lusee_sky_simulations/"
+        "luseesky")
 
 
 def gen_uvbdict(

@@ -1,5 +1,5 @@
 beam_paths:
-  0: ../uvbeams/003/RadiatedElectricField_AntennaLength6m_AntennaAngle30deg_LanderHeight2m_Phase+0deg.uvbeam
+  0: /home/christian/Documents/research/lusee/lusee_sky_simulations/luseesky/uvbeams/003/RadiatedElectricField_AntennaLength6m_AntennaAngle30deg_LanderHeight2m_Phase+0deg.uvbeam
   
   1:
     type: airy
