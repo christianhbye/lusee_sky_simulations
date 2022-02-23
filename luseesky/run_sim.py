@@ -1,11 +1,14 @@
+from luseesky import __path__ as LPATH
 import numpy as np
 from pathlib import Path
 from pyuvsim import uvsim  # type: ignore
 from .simsetup import gen_uvbdict, gen_obsparams
 
+LPATH = LPATH[0]
+
 def run(outpath: str):
     uvd = uvsim.run_uvsim(
-            "./sim_files.obsparam.yaml",
+            LPATH+"/sim_files.obsparam.yaml",
             return_uv=True,
             quiet=False
             )
@@ -30,7 +33,7 @@ if __name__ == "__main__":
 
     DIR = args.dir
 
-    RESDIR = "results/" + DIR[len("uvbeams/AntennaSimResults/"):]
+    RESDIR = LPATH + "results/" + DIR[len("uvbeams/AntennaSimResults/"):]
     assert "results/Ant" in RESDIR  # checking that joining the dirname works
     rp = Path(RESDIR)
     if not rp.is_dir():
@@ -46,5 +49,4 @@ if __name__ == "__main__":
         gen_uvbdict(str(beamfile))
         gen_obsparams(str(beamfile), nsrcs=500)
         run(RESDIR+"/"+RESNAME)
-
 

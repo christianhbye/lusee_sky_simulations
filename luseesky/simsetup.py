@@ -1,7 +1,10 @@
+from luseesky import path as LPATH
 from pathlib import Path
 import yaml  # type: ignore
 
-def gen_uvbdict(ant_path: str, outpath: str = "./sim_files/uvbeam.yaml"):
+LPATH = LPATH[0]
+
+def gen_uvbdict(ant_path: str, outpath: str = LPATH+"/sim_files/uvbeam.yaml"):
     """
     Generate the uvbeam.yaml file.
     """
@@ -25,7 +28,7 @@ def gen_uvbdict(ant_path: str, outpath: str = "./sim_files/uvbeam.yaml"):
 def gen_obsparams(
         ant_model: str,
         nsrcs: int = 500,
-        outpath: str = "./sim_files/obsparam.yaml"
+        outpath: str = LPATH+"/sim_files/obsparam.yaml"
 ):
     """
     Generate the obsparam dict.
