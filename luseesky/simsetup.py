@@ -7,16 +7,17 @@ def gen_uvbdict(ant_path: str, outpath: str = "./sim_files/uvbeam.yaml"):
     """
     uvbdict = {
             "beam_paths": {
-                "0": str(Path(ant_path).resolve()),
-                "1": {
+                0: str(Path(ant_path).resolve()),
+                1: {
                     "type": "airy",
                     "diameter": 16
                     }
                 },
             "freq_interp_kind": "linear",
-            "telescope_location": (0., 180., 0.),
+            "telescope_location": "(0., 180., 0.)",
             "world": "moon",
-            "telescope_name": "LuSEE-Night"
+            "telescope_name": "LuSEE-Night",
+            "x_orientation": "north"
             }
     with open(outpath, "w") as f:
         yaml.safe_dump(uvbdict, f)
