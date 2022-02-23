@@ -1,15 +1,10 @@
-(1) Best to just finish notebook pipeline first.
 
+(1) Do 21-cm simulations.
 
-(2) Should be easy to read ULSA skymodel to pyuvdata like vis_cpu suggests (each NPIX is just a source on the sky)
+(2) Look into calibration and units.
 
-
-(3) Need to figure out layout.csv and uvbeam.yaml files in sim_files. It seems like pyuvsim doesn't allow one antenna only (check Aaron's repo for his force).
-UPDATE: it seems like the uvdata_select should work fine. Just add a throwout antenna and select the autocorrelation of our beam. TEST: that the throwaway antenna indeed does not matter for the results of the autocorrelation (would be very weird if it did...)
-
-(4) Understand E_z and the conditon that E dot r = 0 in the farfield (dipole
+(3) Understand E_z and the conditon that E dot r = 0 in the farfield (dipole
 radiation). It looks like the condition isn't satisfied for these antenna sims.
 
-(5) Do some 21-cm simulations
+(4) Tests for Anze.
 
-(6) Tests for Anze.
