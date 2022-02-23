@@ -8,4 +8,4 @@ luseesky/skymodels/*.txt
 *.npz
 *.h5
 *.skyh5
-results/
+luseesky/results/
