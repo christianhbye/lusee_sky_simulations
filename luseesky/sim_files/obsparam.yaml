@@ -8,10 +8,10 @@ freq:
   end_freq: 50000000.0
   channel_width: 1000000.0
 sources:
-  catalog: '../luseesky/skymodels/pygdsm16_500srcs.txt'
+  catalog: '/home/christian/Documents/research/lusee/lusee_sky_simulations/luseesky/skymodels/pygdsm16_500srcs.txt'
 telescope:
-  array_layout: './layout.csv'
-  telescope_config_name: './uvbeam.yaml'
+  array_layout: '/home/christian/Documents/research/lusee/lusee_sky_simulations/sim_files/layout.csv'
+  telescope_config_name: '/home/christian/Documents/research/lusee/lusee_sky_simulations/sim_files/uvbeam.yaml'
 time:
   Ntimes: 7680
   start_time: 2459630.

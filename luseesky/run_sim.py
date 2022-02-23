@@ -1,11 +1,12 @@
-from luseesky import __path__
+# from luseesky import __path__
 import numpy as np
 from pathlib import Path
 from pyuvsim import uvsim  # type: ignore
 from luseesky.simsetup import gen_uvbdict, gen_obsparams
 
-LPATH = __path__[0]
-
+# LPATH = __path__[0]
+LPATH = ("/home/christian/Documents/research/lusee/lusee_sky_simulations/"
+        "luseesky")
 
 def run(outpath: str):
     uvd = uvsim.run_uvsim(
