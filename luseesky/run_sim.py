@@ -20,4 +20,4 @@ save_dict = {
         "lst": uvd.lst_array
 }
 
-np.savez("./results", **save_dict)
+np.savez("../results/results", **save_dict)
