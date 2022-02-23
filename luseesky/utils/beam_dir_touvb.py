@@ -1,8 +1,12 @@
+from argparse import ArgumentParser
 from luseesky.utils.parse_fits import Beam
 from pathlib import Path
 
-DIR = ("../../AntennaSimResults/003_Freq1-50MHz_Delta1MHz_AntennaLength6m_"
-       "AntennaAngle30deg_LanderHeight2m")
+parser = ArgumentParser()
+parser.add_argument("dir", type=str)
+args = parser.parse_args()
+
+DIR = args.dir
 
 UVDIR = "../uvbeams/" + DIR[len("../../"):]
 assert "uvbeams/Ant" in UVDIR  # checking that joining the dirname works
