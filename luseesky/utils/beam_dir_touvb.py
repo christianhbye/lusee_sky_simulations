@@ -4,7 +4,8 @@ from pathlib import Path
 DIR = ("../../AntennaSimResults/003_Freq1-50MHz_Delta1MHz_AntennaLength6m_"
        "AntennaAngle30deg_LanderHeight2m")
 
-UVDIR = "../uvbeams/" + DIR
+UVDIR = "../uvbeams/" + DIR[len("../../"):]
+assert "uvbeams/Ant" in UVDIR  # checking that joining the dirname works
 uvp = Path(UVDIR)
 if not uvp.is_dir():
     try:
@@ -19,7 +20,7 @@ for beamfile in Path(DIR).iterdir():
     beam = Beam(str(beamfile))
     uvb = beam.to_uvbeam()
     try:
-        uvb.write_beamfits(UVDIR+UVNAME, clobber=False)
+        uvb.write_beamfits(UVDIR+"/"+UVNAME, clobber=False)
     except(OSError) as e:
         print(e)
         continue
