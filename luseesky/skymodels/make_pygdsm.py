@@ -9,10 +9,10 @@ import pyradiosky
 
 print("Generate GSM.")
 REF_FREQ = 25  # MHz
-gsm = GlobalSkyModel2016(freq_unit='MHz')
+gsm = GlobalSkyModel2016(freq_unit="MHz")
 gsm.generate(REF_FREQ)
 
-NSIDE = int(np.sqrt(gsm.generated_map_data.size/12))
+NSIDE = int(np.sqrt(gsm.generated_map_data.size / 12))
 NPIX = gsm.generated_map_data.size
 HPX_INDS = np.arange(NPIX)
 hp = HEALPix(nside=NSIDE, order="ring", frame=Galactic())
