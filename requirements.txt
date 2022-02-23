@@ -1,0 +1,19 @@
+astropy
+astropy_healpix
+black
+flake8
+h5py
+healpy
+ipykernel
+jupyter
+lunarsky
+matplotlib
+mypy
+numpy
+pygdsm
+pyradiosky
+pytest
+pyuvdata
+pyuvsim
+caput @ git+https://github.com/zuoshifan/caput.git@zuo/develop
+ULSA @ git+https://github.com/Yanping-Cong/ULSA.git
