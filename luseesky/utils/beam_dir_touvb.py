@@ -8,7 +8,7 @@ args = parser.parse_args()
 
 DIR = args.dir
 
-UVDIR = "../uvbeams/" + DIR[len("../../"):]
+UVDIR = "../uvbeams/" + DIR[len("../../") :]
 assert "uvbeams/Ant" in UVDIR  # checking that joining the dirname works
 uvp = Path(UVDIR)
 if not uvp.is_dir():
@@ -20,11 +20,11 @@ if not uvp.is_dir():
 for beamfile in Path(DIR).iterdir():
     if not beamfile.suffix == ".fits":
         continue
-    UVNAME = beamfile.name[:-(len(".fits"))] + ".uvbeam"
+    UVNAME = beamfile.name[: -(len(".fits"))] + ".uvbeam"
     beam = Beam(str(beamfile))
     uvb = beam.to_uvbeam()
     try:
-        uvb.write_beamfits(UVDIR+"/"+UVNAME, clobber=False)
-    except(OSError) as e:
+        uvb.write_beamfits(UVDIR + "/" + UVNAME, clobber=False)
+    except (OSError) as e:
         print(e)
         continue
