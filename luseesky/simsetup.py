@@ -13,7 +13,7 @@ def gen_uvbdict(ant_path: str, outpath: str = "./sim_files/uvbeam.yaml"):
                     "diameter": 16
                     }
                 },
-            "freq_interp_kind:" "linear",
+            "freq_interp_kind": "linear",
             "telescope_location": (0., 180., 0.),
             "world": "moon",
             "telescope_name": "LuSEE-Night"
