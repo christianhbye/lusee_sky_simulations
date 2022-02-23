@@ -1,8 +1,8 @@
-from luseesky import path as LPATH
+from luseesky import __path__
 from pathlib import Path
 import yaml  # type: ignore
 
-LPATH = LPATH[0]
+LPATH = __path__[0]
 
 def gen_uvbdict(ant_path: str, outpath: str = LPATH+"/sim_files/uvbeam.yaml"):
     """
