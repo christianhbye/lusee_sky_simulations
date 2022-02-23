@@ -9,7 +9,7 @@ def gen_uvbdict(ant_path: str, outpath: str = "./sim_files/uvbeam.yaml"):
             "beam_paths": {
                 "0": str(Path(ant_path).resolve()),
                 "1": {
-                    "type": airy,
+                    "type": "airy",
                     "diameter": 16
                     }
                 },
@@ -52,9 +52,9 @@ def gen_obsparams(
                 "Ntimes": 7680,
                 "start_time": 2459630.,
                 "duration_days": 30
-                }
+                },
             "select": {
-                bls: "[(0, 0)]"
+                "bls": "[(0, 0)]"
                 }
             }
     with open(outpath, "w") as f:
