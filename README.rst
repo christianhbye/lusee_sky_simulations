@@ -8,7 +8,27 @@ To install:
   source .venv/bin/activate
   python -m pip install .  # use .[dev] to get extra developer dependencies
 
-Note: One of the dependencies is ULSA which requires a specific installation. After running the above commands, do the following to make ULSA work:
+After running the above commands, do the following to make ULSA work if needed:
+
+Download the Intel Fortran compiler from: https://www.intel.com/content/www/us/en/developer/articles/tool/oneapi-standalone-components.html#fortran.
+Then:
+
+.. code:: bash
+
+  cd ~/Downloads
+  chmod u+rwx l_fortran-compiler_p_2022.0.2.83.sh  # makes the bash file exectuable
+  ./l_fortran-compiler_p_2022.0.2.83.sh
+ 
+This should open the Intel installer GUI. Follow the instructions.
+
+Then, set the enviornment variables for :code:`ifort`:
+
+.. code:: bash
+
+  source ~/intel/oneapi/setvars.sh
+  
+
+Now, make the shared library (.so) file:
 
 .. code:: bash
 
@@ -39,3 +59,5 @@ Finally, cd to lusee_sky_simulations and reinstall:
 
   python -m pip install .
 
+
+To make a new skymap with ULSA, download the necessary data files from https://ulsa.readthedocs.io/en/latest/data_used.html and move them to ../obs_sky_data (relative to the ULSA installation path). Then copy all the files in ULSA/NE2001/NE2001_4python/bin_NE2001 to the directory you want to run ULSA in.
