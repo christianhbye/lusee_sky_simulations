@@ -1,5 +1,5 @@
 from pathlib import Path
-import yaml
+import yaml  # type: ignore
 
 def gen_uvbdict(ant_path: str, outpath: str = "./sim_files/uvbeam.yaml"):
     """
