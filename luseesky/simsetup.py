@@ -1,6 +1,26 @@
 from pathlib import Path
 import yaml
 
+def gen_uvbdict(ant_path: str, outpath: str = "./sim_files/uvbeam.yaml"):
+    """
+    Generate the uvbeam.yaml file.
+    """
+    uvbdict = {
+            "beam_paths": {
+                "0": str(Path(ant_path).resolve()),
+                "1": {
+                    "type": airy,
+                    "diameter": 16
+                    }
+                },
+            "freq_interp_kind:" "linear",
+            "telescope_location": (0., 180., 0.),
+            "world": "moon",
+            "telescope_name": "LuSEE-Night"
+            }
+    with open(outpath, "w") as f:
+        yaml.safe_dump(uvbdict, f)
+
 def gen_obsparams(
         ant_model: str,
         nsrcs: int = 500,
@@ -40,22 +60,3 @@ def gen_obsparams(
     with open(outpath, "w") as f:
         yaml.safe_dump(obsparams, f)
 
-def gen_uvbdict(ant_path: str, outpath: str = "./sim_files/uvbeam.yaml"):
-    """
-    Generate the uvbeam.yaml file.
-    """
-    uvbdict = {
-            "beam_paths": {
-                "0": str(Path(ant_path).resolve()),
-                "1": {
-                    "type": airy,
-                    "diameter": 16
-                    }
-                },
-            "freq_interp_kind:" "linear",
-            "telescope_location": (0., 180., 0.),
-            "world": "moon",
-            "telescope_name": "LuSEE-Night"
-            }
-    with open(outpath, "w") as f:
-        yaml.safe_dump(uvbdict, f)
