@@ -36,7 +36,7 @@ if __name__ == "__main__":
     DIR = args.dir
 
     RESDIR = LPATH + "/results/" + DIR[len("uvbeams/AntennaSimResults/") :]
-    assert "results/Ant" in RESDIR  # checking that joining the dirname works
+    assert "results/004" in RESDIR  # checking that joining the dirname works
     rp = Path(RESDIR)
     if not rp.is_dir():
         try:
@@ -49,5 +49,5 @@ if __name__ == "__main__":
             continue
         RESNAME = beamfile.name[: -len(".uvbeam")]
         gen_uvbdict(str(beamfile))
-        gen_obsparams(str(beamfile), nsrcs=500)
+        gen_obsparams(str(beamfile))
         run(RESDIR + "/" + RESNAME)

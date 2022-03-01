@@ -15,5 +15,6 @@ pyradiosky
 pytest
 pyuvdata
 pyuvsim
+ares @ git+https://github.com/mirochaj/ares.git
 caput @ git+https://github.com/zuoshifan/caput.git@zuo/develop
 ULSA @ git+https://github.com/Yanping-Cong/ULSA.git

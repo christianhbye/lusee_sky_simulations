@@ -1,20 +1,20 @@
 filing:
-  outdir: '/home/christian/Documents/research/lusee/lusee_sky_simulations/luseesky/sim_files/'
-  outfile_name: 'uvsim'
-  output_format: 'uvfits'
+  outdir: /home/christian/Documents/research/lusee/lusee_sky_simulations/luseesky/results/results
+  outfile_name: uvbeams/AntennaSimResults/004_Freq1-50MHz_Delta1MHz_AntennaLength1-6m_Delta1m_AntennaAngle75deg_LanderHeight2m/phase180/RadiatedElectricField_AntennaLength6m_AntennaAngle75deg_LanderHeight2m_LBoxZ70cm_Phase+180deg.uvbeam_uvsim
+  output_format: uvfits
 freq:
   Nfreqs: 50
-  start_freq: 1000000.0
-  end_freq: 50000000.0
   channel_width: 1000000.0
-sources:
-  catalog: '/home/christian/Documents/research/lusee/lusee_sky_simulations/luseesky/skymodels/pygdsm16_nside16.txt'
-telescope:
-  array_layout: '/home/christian/Documents/research/lusee/lusee_sky_simulations/luseesky/sim_files/layout.csv'
-  telescope_config_name: '/home/christian/Documents/research/lusee/lusee_sky_simulations/luseesky/sim_files/uvbeam.yaml'
-time:
-  Ntimes: 256
-  start_time: 2459630.
-  duration_days: 28
+  end_freq: 50000000.0
+  start_freq: 1000000.0
 select:
   bls: '[(0, 0)]'
+sources:
+  catalog: /home/christian/Documents/research/lusee/lusee_sky_simulations/luseesky/skymodels/pygdsm16_nside16.txt
+telescope:
+  array_layout: /home/christian/Documents/research/lusee/lusee_sky_simulations/luseesky/sim_files/layout.csv
+  telescope_config_name: /home/christian/Documents/research/lusee/lusee_sky_simulations/luseesky/sim_files/uvbeam.yaml
+time:
+  Ntimes: 256
+  duration_days: 28
+  start_time: 2459630.0

@@ -30,7 +30,7 @@ def gen_uvbdict(
 
 def gen_obsparams(
     ant_model: str,
-    nsrcs: int = 500,
+    nside: int = 16,
     outpath: str = LPATH + "/sim_files/obsparam.yaml",
 ):
     """
@@ -38,7 +38,7 @@ def gen_obsparams(
     """
     obsparams = {
         "filing": {
-            "outdir": "./results/results",
+            "outdir": f"{LPATH}/results/results",
             "outfile_name": f"{ant_model}_uvsim",
             "output_format": "uvfits",
         },
@@ -48,12 +48,12 @@ def gen_obsparams(
             "end_freq": 50000000.0,
             "channel_width": 1000000.0,
         },
-        "sources": {"catalog": f"./skymodels/pygds16_{nsrcs}srcs.txt"},
+        "sources": {"catalog": f"{LPATH}/skymodels/pygdsm16_nside{nside}.txt"},
         "telescope": {
-            "array_layout": "./sim_files/layout.csv",
-            "telescope_config_name": "./sim_files/uvbeam.yaml",
+            "array_layout": f"{LPATH}/sim_files/layout.csv",
+            "telescope_config_name": f"{LPATH}/sim_files/uvbeam.yaml",
         },
-        "time": {"Ntimes": 7680, "start_time": 2459630.0, "duration_days": 30},
+        "time": {"Ntimes": 256, "start_time": 2459630.0, "duration_days": 28},
         "select": {"bls": "[(0, 0)]"},
     }
     with open(outpath, "w") as f:
