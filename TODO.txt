@@ -1,10 +1,7 @@
 
-(1) Do 21-cm simulations.
+(1) Understand waterfall plots and why they don't change with LST.
 
 (2) Look into calibration and units.
 
-(3) Understand E_z and the conditon that E dot r = 0 in the farfield (dipole
-radiation). It looks like the condition isn't satisfied for these antenna sims.
-
-(4) Tests for Anze.
+(3) Tests for Anze.
 
