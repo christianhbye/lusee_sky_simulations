@@ -10,35 +10,34 @@ import warnings
 
 
 def nside2npix(nside: int) -> int:
-    return 12*nside**2
+    return 12 * nside**2
+
 
 def npix2nside(npix: int) -> int:
-    nside = np.sqrt(npix/12)
+    nside = np.sqrt(npix / 12)
     notint = ~np.isclose(nside, int(nside))
     notpower = ~np.isclose(np.log2(nside), int(np.log2(nside)))
     if notint or notpower:
         raise ValueError(f"npix has an invalid value {npix}.")
     return int(nside)
 
+
 def _degrade(sky_map: np.ndarray, nside_out: int) -> np.ndarray:
     return healpy.ud_grade(
-            sky_map,
-            nside_out=nside_out,
-            order_in="RING",
-            order_out="RING"
-            )
+        sky_map, nside_out=nside_out, order_in="RING", order_out="RING"
+    )
+
 
 class Skymodel:
-    
     def __init__(
-            frequency: float = 25,
-            freq_unit: str = "MHz",
-            nside: Optional[int] = 16,
-            npix: Optional[int] = None,
-            healpix_map: Optional[np.ndarray] = None,
-            degrade: bool = False,
-            base_fname: str = "./pygdsm16"
-            ):
+        frequency: float = 25,
+        freq_unit: str = "MHz",
+        nside: Optional[int] = 16,
+        npix: Optional[int] = None,
+        healpix_map: Optional[np.ndarray] = None,
+        degrade: bool = False,
+        base_fname: str = "./pygdsm16",
+    ):
         """
         Must at least specify one of nside, npix, or healpix_map. If they
         are incompatible, nside and npix will change.
@@ -49,7 +48,7 @@ class Skymodel:
         healpix_map: np.ndarray, a sky map in RING healpix coords
         degrade: bool, whether to degrade the healpix map to the given nside
         """
-     
+
         if self.healpix_map is not None:
             if self.nside is None and self.npix is not None:
                 self.nside = npix2nside(self.npix)
@@ -61,19 +60,19 @@ class Skymodel:
         elif self.nside is None:
             if self.npix is None:
                 raise ValueError(
-                        "Must specify at least one of nside, npix, and "
-                         "healpix_map."
-                         )
+                    "Must specify at least one of nside, npix, and "
+                    "healpix_map."
+                )
             else:
                 self.nside = npix2nside(self.npix)
         elif self.npix is None:
             self.npix = nside2npix(self.nside)
 
-        freq_conversion = {"Hz": 1e-6, "kHz": 1e-3, "MHz": 1., "GHz": 1e3}
+        freq_conversion = {"Hz": 1e-6, "kHz": 1e-3, "MHz": 1.0, "GHz": 1e3}
         if not self.freq_unit in freq_conversion:
             raise ValueError(
-            f"Invalid frequency unit {freq_unit}, must be in"
-            f"{list[freq_conversion.keys()]}"
+                f"Invalid frequency unit {freq_unit}, must be in"
+                f"{list[freq_conversion.keys()]}"
             )
         self.frequency *= freq_conversion[self.freq_unit]
         self.freq_unit = "MHz"
@@ -109,13 +108,16 @@ class Skymodel:
         skymodel.hpx_inds = HPX_INDS
         skymodel.hpx_order = "ring"
         skymodel.nside = self.nside
-        skymodel.reference_frequency = self.frequency * np.ones(self.npix) * u.MHz
+        skymodel.reference_frequency = (
+            self.frequency * np.ones(self.npix) * u.MHz
+        )
         skymodel.spectral_index = -2.5 * np.ones(self.npix)  # XXX
         assert skymodel.check()
         skymodel.healpix_to_point()  # convert to point sources
         skymodel.write_text_catalog(self.base_name + f"_nside{NSIDE}.txt")
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     sm = SkyModel()
     if sm.healpix_map is None:
         sm.gen_gsm()
