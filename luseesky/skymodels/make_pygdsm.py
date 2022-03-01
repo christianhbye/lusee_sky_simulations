@@ -5,6 +5,7 @@ import healpy
 import numpy as np
 from pygdsm import GlobalSkyModel2016
 import pyradiosky
+from typing import Optional
 import warnings
 
 
@@ -32,11 +33,11 @@ class Skymodel:
     def __init__(
             frequency: float = 25,
             freq_unit: str = "MHz",
-            nside: int = 16,
-            npix: None, # union nside npix
-            healpix_map: np.ndarray = None, # union None (optional?),
-            degrade = False
-            base_fname = "./pygdsm16"
+            nside: Optional[int] = 16,
+            npix: Optional[int] = None,
+            healpix_map: Optional[np.ndarray] = None,
+            degrade: bool = False,
+            base_fname: str = "./pygdsm16"
             ):
         """
         Must at least specify one of nside, npix, or healpix_map. If they
