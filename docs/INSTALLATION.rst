@@ -1,15 +1,15 @@
-See the README [link to readme] for a general installation guide and how to get started. In general, all that is needed is to clone the repository and install the directory with pip.
+See the `README <https://github.com/christianhbye/lusee_sky_simulations/blob/main/README.rst>`_ for a general installation guide and how to get started. In general, all that is needed is to clone the repository and install the directory with pip.
 
 
 Installing ARES
 ################
 
-Models of the global 21-cm signal are generated with ARES (link). This dependency is not automatically installed with the luseesky repository. Instead, the user should install ares seperateley, following their installation guide (link). As of March 1 2022, that involves cloning the repository and running the scripts setup.py and remote.py. For example:
+Models of the global 21-cm signal are generated with `ARES <https://github.com/mirochaj/ares>`_. This dependency is not automatically installed with the luseesky repository. Instead, the user should install ARES seperateley, following their `installation guide <https://github.com/mirochaj/ares#getting-started>`_. As of March 1, 2022, that involves cloning the repository and running the scripts setup.py and remote.py. For example:
 
 .. code:: bash
 
     source .venv/bin/activate  # activate the virtual env used for luseesky
-    git clone ####  ares link
+    git clone https://github.com/mirochaj/ares.git
     cd ares
     python setup.py install
     python remote.py
@@ -18,7 +18,7 @@ Models of the global 21-cm signal are generated with ARES (link). This dependenc
 Installing ULSA
 ###############
 
-If desired, ULSA (link) can be used to generate sky models described in ##LINK. To make ULSA work, follow these steps:
+If desired, `ULSA <https://github.com/Yanping-Cong/ULSA>`_ can be used to generate sky models described in `Cong et al, 2021 <https://ui.adsabs.harvard.edu/abs/2021ApJ...914..128C/abstract>`_. To make ULSA work, follow these steps:
 
 Download the Intel Fortran compiler from: https://www.intel.com/content/www/us/en/developer/articles/tool/oneapi-standalone-components.html#fortran.
 Then:
