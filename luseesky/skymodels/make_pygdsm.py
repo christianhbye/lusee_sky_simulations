@@ -6,7 +6,6 @@ import numpy as np
 from pygdsm import GlobalSkyModel2016
 import pyradiosky
 from typing import Optional
-import warnings
 
 
 def nside2npix(nside: int) -> int:
@@ -28,7 +27,7 @@ def _degrade(sky_map: np.ndarray, nside_out: int) -> np.ndarray:
     )
 
 
-class Skymodel:
+class SkyMap:
     def __init__(
         frequency: float = 25,
         freq_unit: str = "MHz",
@@ -45,44 +44,53 @@ class Skymodel:
         nside: int, nside of healpix map, must be power of 2
         npix: int, npix of healpix map, must be s.t. sqrt(npix/12)
         is power of 2
-        healpix_map: np.ndarray, a sky map in RING healpix coords
+        healpix_map: np.ndarray, a sky map in RING healpix coords. Must have
+        units of K.
         degrade: bool, whether to degrade the healpix map to the given nside
         """
 
-        if self.healpix_map is not None:
-            if self.nside is None and self.npix is not None:
-                self.nside = npix2nside(self.npix)
-            if self.degrade:
-                self.healpix_map = _degrade(self.healpix_map, self.nside)
-            self.degrade = False
-            self.npix = healpix_map.size
-            self.nside = npix2nside(npix)
-        elif self.nside is None:
-            if self.npix is None:
+        if healpix_map is not None:
+            if nside is None and npix is not None:
+                nside = npix2nside(npix)
+            if degrade:
+                healpix_map = _degrade(healpix_map, nside)
+            degrade = False
+            npix = healpix_map.size
+            nside = npix2nside(npix)
+        elif nside is None:
+            if npix is None:
                 raise ValueError(
                     "Must specify at least one of nside, npix, and "
                     "healpix_map."
                 )
             else:
-                self.nside = npix2nside(self.npix)
-        elif self.npix is None:
-            self.npix = nside2npix(self.nside)
+                nside = npix2nside(npix)
+        elif npix is None:
+            npix = nside2npix(nside)
 
         freq_conversion = {"Hz": 1e-6, "kHz": 1e-3, "MHz": 1.0, "GHz": 1e3}
-        if not self.freq_unit in freq_conversion:
+        if freq_unit not in freq_conversion:
             raise ValueError(
                 f"Invalid frequency unit {freq_unit}, must be in"
                 f"{list[freq_conversion.keys()]}"
             )
-        self.frequency *= freq_conversion[self.freq_unit]
-        self.freq_unit = "MHz"
+        frequency *= freq_conversion[freq_unit]
+        freq_unit = "MHz"
+
+        # self.frequency = frequency
+        # self.freq_unit = freq_unit
+        # self.nside = nside
+        # self.npix = npix
+        # self.healpix_map = healpix_map
+        # self.degrade = degrade
+        # self.base_fname = base_fname
 
     def gen_gsm(self):
         gsm = GlobalSkyModel2016(freq_unit="MHz")
-        gsm.generate(frequency)
+        gsm.generate(self.frequency)
         healpix_map = gsm.generated_map_data
         # degrading map
-        if degrade:
+        if self.degrade:
             healpix_map = _degrade(healpix_map, self.nside)
         self.healpix_map = healpix_map
 
@@ -92,8 +100,8 @@ class Skymodel:
         coords = hp.healpix_to_skycoord(HPX_INDS).transform_to("icrs")
         ra, dec = coords.ra, coords.dec
         # some mock stokes params assuming Ex == Ey
-        stokes = u.Quantity(np.zeros((4, 1, NPIX)), unit=u.K)
-        stokes[0, 0] = dgr_map * u.K  # set I to the GDSM Temp
+        stokes = u.Quantity(np.zeros((4, 1, self.npix)), unit=u.K)
+        stokes[0, 0] = self.healpix_map * u.K  # set I to the GDSM Temp
         # stokes[2, 0] = stokes[0, 0]  # U = I, Q=V=0
         skymodel = pyradiosky.SkyModel()
         skymodel.Ncomponents = self.npix
@@ -114,11 +122,11 @@ class Skymodel:
         skymodel.spectral_index = -2.5 * np.ones(self.npix)  # XXX
         assert skymodel.check()
         skymodel.healpix_to_point()  # convert to point sources
-        skymodel.write_text_catalog(self.base_name + f"_nside{NSIDE}.txt")
+        skymodel.write_text_catalog(self.base_name + f"_nside{self.nside}.txt")
 
 
 if __name__ == "__main__":
-    sm = SkyModel()
+    sm = SkyMap()
     if sm.healpix_map is None:
         sm.gen_gsm()
     sm.make_pyradio_skymap()
