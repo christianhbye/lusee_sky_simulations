@@ -1,4 +1,4 @@
-import ares
+import ares  # type: ignore
 import numpy as np
 
 # params to save:
