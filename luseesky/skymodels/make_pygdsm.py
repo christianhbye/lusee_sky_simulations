@@ -69,7 +69,7 @@ class Skymodel:
         elif self.npix is None:
             self.npix = nside2npix(self.nside)
 
-        freq_conversion = {"Hz": 1e-6, "kHz": 1e-3, "MHz:" 1., "GHz:" 1e3}
+        freq_conversion = {"Hz": 1e-6, "kHz": 1e-3, "MHz": 1., "GHz": 1e3}
         if not self.freq_unit in freq_conversion:
             raise ValueError(
             f"Invalid frequency unit {freq_unit}, must be in"
