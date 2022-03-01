@@ -3,8 +3,10 @@ from pathlib import Path
 import yaml  # type: ignore
 
 # LPATH = __path__[0]
-LPATH = ("/home/christian/Documents/research/lusee/lusee_sky_simulations/"
-        "luseesky")
+LPATH = (
+    "/home/christian/Documents/research/lusee/lusee_sky_simulations/"
+    "luseesky"
+)
 
 
 def gen_uvbdict(

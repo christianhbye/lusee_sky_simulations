@@ -15,8 +15,8 @@ gsm.generate(REF_FREQ)
 
 # degrading map to NSIDE = 16
 dgr_map = healpy.ud_grade(
-        gsm.generated_map_data, nside_out=16, order_in="RING", order_out="RING"
-    )
+    gsm.generated_map_data, nside_out=16, order_in="RING", order_out="RING"
+)
 
 NSIDE = int(np.sqrt(dgr_map.size / 12))
 NPIX = dgr_map.size
