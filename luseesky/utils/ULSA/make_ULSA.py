@@ -1,8 +1,6 @@
-# type: ignore
-
-from astropy.io import fits
+from astropy.io import fits  # type: ignore
 import numpy as np
-from ULSA.sky_map.produce_absorbed_sky_map import absorption_JRZ
+from ULSA.sky_map.produce_absorbed_sky_map import absorption_JRZ  # type: ignore
 
 FREQ = 25
 NSIDE = 32
