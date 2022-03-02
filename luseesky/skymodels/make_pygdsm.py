@@ -1,11 +1,12 @@
-from astropy.coordinates import Galactic
-from astropy_healpix import HEALPix
-from astropy import units as u
-import healpy
+from astropy.coordinates import Galactic  # type: ignore
+from astropy_healpix import HEALPix  # type: ignore
+from astropy import units as u  # type: ignore
+import healpy  # type: ignore
 import numpy as np
-from pygdsm import GlobalSkyModel2016
-import pyradiosky
+from pygdsm import GlobalSkyModel2016  # type: ignore
+import pyradiosky  # type: ignore
 from typing import Optional
+import warnings
 
 
 def nside2npix(nside: int) -> int:
@@ -29,6 +30,7 @@ def _degrade(sky_map: np.ndarray, nside_out: int) -> np.ndarray:
 
 class SkyMap:
     def __init__(
+        self,
         frequency: float = 25,
         freq_unit: str = "MHz",
         nside: Optional[int] = 16,
@@ -50,10 +52,18 @@ class SkyMap:
         """
 
         if healpix_map is not None:
-            if nside is None and npix is not None:
-                nside = npix2nside(npix)
             if degrade:
-                healpix_map = _degrade(healpix_map, nside)
+                if nside is None:
+                    if npix is None:
+                        warnings.warn(
+                            "Cannot degrade map since nside and npix are not"\
+                            "specified.",
+                            UserWarning
+                            )
+                    else:
+                        nside = npix2nside(npix)
+                if nside is not None:
+                    healpix_map = _degrade(healpix_map, nside)
             degrade = False
             npix = healpix_map.size
             nside = npix2nside(npix)
@@ -72,18 +82,18 @@ class SkyMap:
         if freq_unit not in freq_conversion:
             raise ValueError(
                 f"Invalid frequency unit {freq_unit}, must be in"
-                f"{list[freq_conversion.keys()]}"
+                f"{freq_conversion.keys()}"
             )
         frequency *= freq_conversion[freq_unit]
         freq_unit = "MHz"
 
-        # self.frequency = frequency
-        # self.freq_unit = freq_unit
-        # self.nside = nside
-        # self.npix = npix
-        # self.healpix_map = healpix_map
-        # self.degrade = degrade
-        # self.base_fname = base_fname
+        self.frequency = frequency
+        self.freq_unit = freq_unit
+        self.nside = nside
+        self.npix = npix
+        self.healpix_map = healpix_map
+        self.degrade = degrade
+        self.base_fname = base_fname
 
     def gen_gsm(self):
         gsm = GlobalSkyModel2016(freq_unit="MHz")
