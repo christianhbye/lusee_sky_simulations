@@ -5,8 +5,11 @@ from pyuvsim import uvsim  # type: ignore
 from luseesky.simsetup import gen_uvbdict, gen_obsparams
 
 # LPATH = __path__[0]
-LPATH = ("/home/christian/Documents/research/lusee/lusee_sky_simulations/"
-        "luseesky")
+LPATH = (
+    "/home/christian/Documents/research/lusee/lusee_sky_simulations/"
+    "luseesky"
+)
+
 
 def run(outpath: str):
     uvd = uvsim.run_uvsim(
