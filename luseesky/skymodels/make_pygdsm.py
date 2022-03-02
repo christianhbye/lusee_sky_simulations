@@ -56,10 +56,10 @@ class SkyMap:
                 if nside is None:
                     if npix is None:
                         warnings.warn(
-                            "Cannot degrade map since nside and npix are not"\
+                            "Cannot degrade map since nside and npix are not"
                             "specified.",
-                            UserWarning
-                            )
+                            UserWarning,
+                        )
                     else:
                         nside = npix2nside(npix)
                 if nside is not None:
