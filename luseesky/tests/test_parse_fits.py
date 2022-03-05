@@ -48,6 +48,7 @@ def test_flatten():
         ]
     )
 
+
 def test_sph2cart():
     E = np.array([1, 0, 0])  # radial vector along z
     Ex, Ey, Ez = lpf.sph2cart(*E) @ E
@@ -60,18 +61,18 @@ def test_sph2cart():
     E = np.array([1, 1, 1])
     Ex, Ey, Ez = lpf.sph2cart(*E) @ E
     assert np.allclose(lpf.sph2cart(*E).T, np.linalg.inv(lpf.sph2cart(*E)))
-    assert np.isclose(Ex, 1 - np.sqrt(2)/2)
-    assert np.isclose(Ey, 1 + np.sqrt(2)/2)
+    assert np.isclose(Ex, 1 - np.sqrt(2) / 2)
+    assert np.isclose(Ey, 1 + np.sqrt(2) / 2)
     assert np.isclose(Ez, 0)
     assert np.isclose(np.linalg.norm(E), np.linalg.norm([Ex, Ey, Ez]))
-    
+
 
 def test_cart2sph():
     E = np.array([1, 1, 1])
     Er, Eth, Eph = lpf.cart2sph(*E) @ E
     assert np.allclose(lpf.cart2sph(*E).T, np.linalg.inv(lpf.cart2sph(*E)))
-    assert np.isclose(Er, 1 + np.sqrt(2)/2)
-    assert np.isclose(Eth, 1 - np.sqrt(2)/2)
+    assert np.isclose(Er, 1 + np.sqrt(2) / 2)
+    assert np.isclose(Eth, 1 - np.sqrt(2) / 2)
     assert np.isclose(Eph, 0)
     assert np.isclose(np.linalg.norm(E), np.linalg.norm([Er, Eth, Eph]))
 
@@ -82,6 +83,7 @@ def test_cart2sph():
     assert np.isclose(Eth, 0)
     assert np.isclose(Eph, 0)
     assert np.isclose(np.linalg.norm(E), np.linalg.norm([Er, Eth, Eph]))
+
 
 def test_to_sphericals_cartesian():
     """
@@ -100,4 +102,3 @@ def test_to_sphericals_cartesian():
     test_beam.to_cartesian()
     assert test_beam.beam_coords == "cartesian"
     assert np.allclose(np.array([Ex, Ey, Ez]), test_beam.E_field)
-
