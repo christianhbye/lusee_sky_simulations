@@ -33,10 +33,40 @@ def Efield_to_power(efield: np.ndarray, axis: int = 3) -> np.ndarray:
 
     return np.sqrt(np.sum(np.abs(efield) ** 2, axis=axis))
 
+def sph2cart(
+        sin_th: float, cos_th: float, sin_ph: float, cos_ph: float
+) -> np.ndarray:
+    """
+    Get the rotation matrix for transforming spherical coordinates
+    to cartesian. Note that the matrix is orthogonal so the inverse transform
+    is given by its transpose.
+    """
+    rot_matrix = np.array([
+        [sin_th*cos_ph, sin_th*sin_ph, cos_th],
+        [cos_th*cos_ph, cos_th*sin_ph, -sin_th],
+        [-sin_ph, cos_ph, 0]
+    ])
+    return rot_matrix
+
+def cart2sph(x: float, y: float, z: float) -> np.ndarray:
+    """
+    Get the rotation matrix for transforming cartesian coordinates to
+    sphericals. This is simply the transpose of the matrix that transforms
+    sphericals to cartesian.
+    """
+    r = np.sqrt(x**2 + y**2+ z**2)
+    sin_th = np.sqrt(x**2 + y**2)/r  # ok since 0 <= theta <= 180
+    cos_th = z/r
+    sin_ph = y / (r*sin_th)
+    cos_ph = x / (r*cos_th)
+    rot_matrix = sph2cart(sin_th, cos_th, sin_ph, cos_ph).T
+    return rot_matrix
+
 
 @dataclass
 class Beam:
     fname: str
+    beam_coords: str = "cartesian"
     E_field: np.ndarray = field(init=False)
     power: np.ndarray = field(init=False)
     frequencies: np.ndarray = field(init=False)
@@ -46,7 +76,7 @@ class Beam:
     def __post_init__(self):
         simfits = fits.open(self.fname)
         header = simfits[0].header
-        self.E_field = simfits[0].data + 1j * simfits[1].data
+        self.E_field = simfits[0].data + 1j * simfits[1].data  # nu, th, ph
         simfits.close()
         self.E_field /= 1e3  # convert mV to V
         self.frequencies = mk_linspace(
@@ -151,13 +181,53 @@ class Beam:
     @staticmethod
     def _delete_txt(path: str, verbose: bool = False):
         for f in Path(path).iterdir():
-            assert f.suffix == ".txt"
+            assert f.suffix == ".txt"  # safety
             f.unlink()  # delete file
         if verbose:
             print("Deleting files.")
         Path(path).rmdir()
         if verbose:
             print(f"Remove directory {path}.")
+
+    def to_sphericals(self):
+        if self.beam_coords == "sphericals":
+            warnings.warn(
+                    "E-field is already in spherical coordinates.",
+                    UserWarning
+                    )
+        else:  # cartesian coordinates
+            Ex, Ey, Ez = self.E_field
+            rot_matrix_re = cart2sph(Ex.real, Ey.real, Ez.real)
+            E_real = rot_matrix_re @ self.E_field.real
+            rot_matrix_im = cart2sph(Ex.imag, Ey.imag, Ez.imag)
+            E_im = rot_matrix_im @ self.E_field.imag
+            self.E_field = E_real + 1j*E_im
+            self.beam_coords = "sphericals"
+
+    def to_cartesian(self):
+        if self.beam_coords == "cartesian":
+            warnings.warn(
+                    "E-field is already in cartesian coordinates.",
+                    UserWarning
+                    )
+        else:  # spherical coordinates
+            Er, Eth, Eph = self.E_field
+            sin_th = np.sin(Eth.real) + 1j*np.sin(Eth.imag)
+            cos_th = np.cos(Eth.real) + 1j*np.cos(Eth.imag)
+            sin_ph = np.sin(Eph.real) + 1j*np.sin(Eph.imag)
+            cos_ph = np.cos(Eph.real) + 1j*np.cos(Eph.imag)
+            rot_matrix_re = sph2cart(
+                    sin_th.real, cos_th.real, sin_ph.real, cos_ph.real
+            )
+            E_real = rot_matrix_re @ self.E_field.real
+            rot_matrix_im = sph2cart(
+                    sin_th.imag, cos_th.imag, sin_ph.imag, cos_ph.imag
+            )
+            E_im = rot_matrix_im @ self.E_field.imag
+            self.E_field = E_real + 1j*E_im
+            self.beam_coords = "cartesian"
+
+
 
     def to_uvbeam(
         self, beam_type: str = "E_field", verbose: bool = False

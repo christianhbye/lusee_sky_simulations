@@ -47,3 +47,57 @@ def test_flatten():
             for i in range(th_size)
         ]
     )
+
+def test_sph2cart():
+    E = np.array([1, 0, 0])  # radial vector along z
+    Ex, Ey, Ez = sph2cart(*E) @ E
+    assert np.allclose(sph2cart(*E).T, np.linalg.inv(sph2cart(*E))
+    assert np.isclose(Ex, 0)
+    assert np.isclose(Ey, 0)
+    assert np.isclose(Ez, 1)
+    assert np.isclose(np.linalg.norm(E), np.linalg.norm([Ex, Ey, Ez])
+
+    E = np.array([1, 1, 1])
+    Ex, Ey, Ez = sph2cart(*E) @ E
+    assert np.allclose(sph2cart(*E).T, np.linalg.inv(sph2cart(*E))
+    assert np.isclose(Ex, 1 - np.sqrt(2)/2)
+    assert np.isclose(Ey, 1 + np.sqrt(2)/2)
+    assert np.isclose(Ez, 0)
+    assert np.isclose(np.linalg.norm(E), np.linalg.norm([Ex, Ey, Ez])
+    
+
+def test_cart2sph():
+    E = np.array([1, 1, 1])
+    Er, Eth, Eph = cart2sph(*E) @ E
+    assert np.allclose(cart2sph(*E).T, np.linalg.inv(cart2sph(*E))
+    assert np.isclose(Er, 1 + np.sqrt(2)/2)
+    assert np.isclose(Eth, 1 - np.sqrt(2)/2)
+    assert np.isclose(Eph, 0)
+    assert np.isclose(np.linalg.norm(E), np.linalg.norm([Er, Eth, Eph])
+
+    E = [1, -1, 0]
+    Er, Eth, Eph = cart2sph(*E) @ E
+    assert np.allclose(cart2sph(*E).T, np.linalg.inv(cart2sph(*E))
+    assert np.isclose(Er, np.sqrt(2))
+    assert np.isclose(Eth, 0)
+    assert np.isclose(Eph, 0)
+    assert np.isclose(np.linalg.norm(E), np.linalg.norm([Er, Eth, Eph])
+
+def test_to_sphericals_cartesian():
+    """
+    Check that both the real and imaginary parts are transformed correctly
+    for all frequencies and sky coordinates
+    """
+    test_beam = lpf.Beam("luseesky/tests/beam.fits")
+    assert test_beam.beam_coords == "cartesian"
+    Ex, Ey, Ez = test_beam.E_field
+    test_beam.to_sphericals()
+    assert test_beam.beam_coords == "sphericals"
+    E_sph = test_beam.E_field
+    assert np.allclose(E_sph.real, cart2sph(Ex.real, Ey.real, Ez.real)
+    assert np.allclose(E_sph.imag, cart2sph(Ex.imag, Ey.imag, Ez.imag)
+    # convert back
+    test_beam.to_cartesian()
+    assert test_beam.beam_coords == "cartesian"
+    assert np.allclose(np.array([Ex, Ey, Ez]), test_beam.E_field)
+
