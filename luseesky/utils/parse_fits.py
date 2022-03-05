@@ -199,7 +199,9 @@ class Beam:
                 "E-field is already in spherical coordinates.", UserWarning
             )
         else:  # cartesian coordinates
-            Ex, Ey, Ez = self.E_field
+            Ex = self.E_field[:, :, :, 0]
+            Ey = self.E_field[:, :, :, 1]
+            Ez = self.E_field[:, :, :, 2]
             rot_matrix_re = cart2sph(Ex.real, Ey.real, Ez.real)
             E_real = rot_matrix_re @ self.E_field.real
             rot_matrix_im = cart2sph(Ex.imag, Ey.imag, Ez.imag)
@@ -213,7 +215,9 @@ class Beam:
                 "E-field is already in cartesian coordinates.", UserWarning
             )
         else:  # spherical coordinates
-            Er, Eth, Eph = self.E_field
+            Er = self.E_field[:, :, :, 0]
+            Eth = self.E_field[:, :, :, 1]
+            Eph = self.E_field[:, :, :, 2]
             sin_th = np.sin(Eth.real) + 1j * np.sin(Eth.imag)
             cos_th = np.cos(Eth.real) + 1j * np.cos(Eth.imag)
             sin_ph = np.sin(Eph.real) + 1j * np.sin(Eph.imag)

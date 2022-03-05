@@ -92,7 +92,9 @@ def test_to_sphericals_cartesian():
     """
     test_beam = lpf.Beam("luseesky/tests/beam.fits")
     assert test_beam.beam_coords == "cartesian"
-    Ex, Ey, Ez = test_beam.E_field
+    Ex = test_beam.E_field[:, :, :, 0]
+    Ey = test_beam.E_field[:, :, :, 1]
+    Ez = test_beam.E_field[:, :, :, 2]
     test_beam.to_sphericals()
     assert test_beam.beam_coords == "sphericals"
     E_sph = test_beam.E_field
@@ -101,4 +103,4 @@ def test_to_sphericals_cartesian():
     # convert back
     test_beam.to_cartesian()
     assert test_beam.beam_coords == "cartesian"
-    assert np.allclose(np.array([Ex, Ey, Ez]), test_beam.E_field)
+    assert np.allclose(np.stack([Ex, Ey, Ez], axis=-1), test_beam.E_field)
