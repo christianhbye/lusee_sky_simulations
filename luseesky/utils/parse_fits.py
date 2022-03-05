@@ -78,6 +78,7 @@ class Beam:
     phi: np.ndarray = field(init=False)
 
     def __post_init__(self):
+        self.beam_coords = beam_coords
         simfits = fits.open(self.fname)
         header = simfits[0].header
         self.E_field = simfits[0].data + 1j * simfits[1].data  # nu, th, ph
