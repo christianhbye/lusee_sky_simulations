@@ -34,14 +34,16 @@ def Efield_to_power(efield: np.ndarray, axis: int = 3) -> np.ndarray:
     return np.sqrt(np.sum(np.abs(efield) ** 2, axis=axis))
 
 
-def sph2cart(
-    sin_th: float, cos_th: float, sin_ph: float, cos_ph: float
-) -> np.ndarray:
+def sph2cart(theta: float, phi: float) -> np.ndarray:
     """
     Get the rotation matrix for transforming spherical coordinates
     to cartesian. Note that the matrix is orthogonal so the inverse transform
     is given by its transpose.
     """
+    sin_th = np.sin(theta)
+    cos_th = np.cos(theta)
+    sin_ph = np.sin(phi)
+    cos_ph = np.cos(phi)
     rot_matrix = np.array(
         [
             [sin_th * cos_ph, sin_th * sin_ph, cos_th],
@@ -78,7 +80,6 @@ class Beam:
     phi: np.ndarray = field(init=False)
 
     def __post_init__(self):
-        self.beam_coords = beam_coords
         simfits = fits.open(self.fname)
         header = simfits[0].header
         self.E_field = simfits[0].data + 1j * simfits[1].data  # nu, th, ph
@@ -204,9 +205,9 @@ class Beam:
             Ey = self.E_field[:, :, :, 1]
             Ez = self.E_field[:, :, :, 2]
             rot_matrix_re = cart2sph(Ex.real, Ey.real, Ez.real)
-            E_real = rot_matrix_re @ self.E_field.real
+            E_real = np.einsum("ij, abcj", [rot_matrix_re, self.E_field.real])
             rot_matrix_im = cart2sph(Ex.imag, Ey.imag, Ez.imag)
-            E_im = rot_matrix_im @ self.E_field.imag
+            E_im = np.einsum("ij, abcj", [rot_matrix_im, self.E_field.imag])
             self.E_field = E_real + 1j * E_im
             self.beam_coords = "sphericals"
 
@@ -219,18 +220,12 @@ class Beam:
             Er = self.E_field[:, :, :, 0]
             Eth = self.E_field[:, :, :, 1]
             Eph = self.E_field[:, :, :, 2]
-            sin_th = np.sin(Eth.real) + 1j * np.sin(Eth.imag)
-            cos_th = np.cos(Eth.real) + 1j * np.cos(Eth.imag)
-            sin_ph = np.sin(Eph.real) + 1j * np.sin(Eph.imag)
-            cos_ph = np.cos(Eph.real) + 1j * np.cos(Eph.imag)
-            rot_matrix_re = sph2cart(
-                sin_th.real, cos_th.real, sin_ph.real, cos_ph.real
-            )
-            E_real = rot_matrix_re @ self.E_field.real
-            rot_matrix_im = sph2cart(
-                sin_th.imag, cos_th.imag, sin_ph.imag, cos_ph.imag
-            )
-            E_im = rot_matrix_im @ self.E_field.imag
+            th = Eth.real + 1j * Eth.imag
+            ph = Eph.real + 1j * Eph.imag
+            rot_matrix_re = sph2cart(th.real, ph.real)
+            E_real = np.einsum("ij, abcj", [rot_matrix_re, self.E_field.real])
+            rot_matrix_im = sph2cart(th.imag, ph.imag)
+            E_im = np.einsum("ij, abcj", [rot_matrix_im, self.E_field.imag])
             self.E_field = E_real + 1j * E_im
             self.beam_coords = "cartesian"
 

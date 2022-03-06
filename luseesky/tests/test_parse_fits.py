@@ -51,16 +51,22 @@ def test_flatten():
 
 def test_sph2cart():
     E = np.array([1, 0, 0])  # radial vector along z
-    Ex, Ey, Ez = lpf.sph2cart(*E) @ E
-    assert np.allclose(lpf.sph2cart(*E).T, np.linalg.inv(lpf.sph2cart(*E)))
+    Eth, Eph = E[1:]
+    Ex, Ey, Ez = lpf.sph2cart(Eth, Eph) @ E
+    assert np.allclose(
+            lpf.sph2cart(Eth, Eph).T, np.linalg.inv(lpf.sph2cart(Eth, Eph))
+        )
     assert np.isclose(Ex, 0)
     assert np.isclose(Ey, 0)
     assert np.isclose(Ez, 1)
     assert np.isclose(np.linalg.norm(E), np.linalg.norm([Ex, Ey, Ez]))
 
     E = np.array([1, 1, 1])
-    Ex, Ey, Ez = lpf.sph2cart(*E) @ E
-    assert np.allclose(lpf.sph2cart(*E).T, np.linalg.inv(lpf.sph2cart(*E)))
+    Eth, Eph = E[1:]
+    Ex, Ey, Ez = lpf.sph2cart(Eth, Eph) @ E
+    assert np.allclose(
+            lpf.sph2cart(Eth, Eph).T, np.linalg.inv(lpf.sph2cart(Eth, Eph))
+        )
     assert np.isclose(Ex, 1 - np.sqrt(2) / 2)
     assert np.isclose(Ey, 1 + np.sqrt(2) / 2)
     assert np.isclose(Ez, 0)
