@@ -173,8 +173,8 @@ class Beam:
                 for j, ph in enumerate(np.radians(self.phi)):
                     rot_matrix = cart2sph(th, ph)
                     E_sph[:, i, j] = np.einsum(
-                            "ij,fj->fi", rot_matrix, self.E_field[:, i, j]
-                            )
+                        "ij,fj->fi", rot_matrix, self.E_field[:, i, j]
+                    )
             self.E_field = E_sph
             self.beam_coords = "sphericals"
 
@@ -189,8 +189,8 @@ class Beam:
                 for j, ph in enumerate(np.radians(self.phi)):
                     rot_matrix = sph2cart(th, ph)
                     E_cart[:, i, j] = np.einsum(
-                            "ij,fj->fi", rot_matrix, self.E_field[:, i, j]
-                            )
+                        "ij,fj->fi", rot_matrix, self.E_field[:, i, j]
+                    )
             self.E_field = E_cart
             self.beam_coords = "cartesian"
 
