@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt  # type: ignore
 import numpy as np
 from pathlib import Path
 from pyuvdata import uvbeam  # type: ignore
-from typing import Any, Tuple
+from typing import Any, Optional, Tuple
 import warnings
 
 from .coordinates import sph2cart, cart2sph
@@ -112,19 +112,18 @@ class Beam:
         plt.show()
 
     def _flatten(
-        self, beam_type: str = "power"
+            self,
+            beam_type: str = "power",
+            arr: Optional[np.ndarray] = None,
+            return_th_ph = True
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         Convert array with the shape (freq_size, th_size, ph_size) to a
         2d-array of shape (freq_size, th_size*ph_size) where theta increases
         faster than phi
         """
-        if beam_type == "power":
+        if beam_type == "power" and arr is None:
             arr = np.copy(self.power)
-        elif beam_type == "E_field":
-            raise NotImplementedError("Might add E_field support later.")
-        else:
-            raise ValueError("beam_type must be 'power' or 'E_field'")
         flat_beam = arr.reshape(
             self.frequencies.size, self.theta.size * self.phi.size, order="F"
         )
@@ -150,6 +149,68 @@ class Beam:
                 comments="",
             )
         return savepath
+
+    def _write_txt_Efield(self, path: str = ".", verbose: bool = False) -> str:
+        """
+        Save Efield beams in txt file format readable by UVBeam.
+        """
+        if beam_coords == "cartesian":
+            self.to_sphericals()
+        E_theta = self.E_field[:, :, :, 1]
+        E_phi = self.E_field[:, :, :, 2]
+        theta_mag = np.abs(E_theta)
+        theta_phase = np.degrees(np.angle(E_theta))
+        theta_phase = np.where(theta_phase < 0, theta_phase + 360, theta_phase)
+        phi_mag = np.abs(E_phi)
+        phi_phase = np.degrees(np.angle(E_phi))
+        phi_phase = np.where(phi_phase < 0, phi_phase + 360, phi_phase)
+        theta_mag, theta, phi = self._flatten(
+                beam_type="E_field", arr=theta_mag
+                )
+        theta_phase = self._flatten(
+                beam_type="E_field", arr=theta_phase, return_th_ph=False
+                ) 
+        phi_mag = self._flatten(
+                beam_type="E_field", arr=phi_mag, return_th_ph=False
+                )
+        phi_phase = self._flatten(
+                beam_type="E_field", arr=phi_phase, return_th_ph=False
+                )
+        delta = np.radians(theta_phase - phi_phase)
+        E_mag = np.sqrt(
+                theta_mag**2 + phi_mag**2 + 2*theta_mag*phi_mag*np.cos(delta)
+            )
+        ax_ratio_sq = theta_mag**2 + phi_mag**2 + np.abs(E_theta**2 + E_phi**2)
+        ax_ratio_sq /= theta_mag**2 + phi_mag**2 - np.abs(E_theta**2+E_phi**2)
+        ax_ratio = np.sqrt(ax_ratio_sq)
+        savepath = path + "/tmp"
+        Path(savepath).mkdir()
+        if verbose:
+            print(f"Saving {len(self.frequencies)} files to {savepath}")
+        for i, freq in enumerate(self.frequencies):
+            np.savetxt(
+                savepath + f"/{freq}.txt",
+                np.column_stack(
+                    (
+                        theta,
+                        phi,
+                        E_mag[i],
+                        theta_mag[i],
+                        theta_phase[i],
+                        phi_mag[i],
+                        phi_phase[i],
+                        ax_ratio[i]
+                    )
+                ),
+                header=(
+                    "Theta [deg] Phi [deg] Abs(V) [V] Abs(Theta) [V]"
+                    "Phase(Theta) [deg] Abs(Phi) [V] Phase(Phi) [deg]"
+                    "Ax.Ratio []\n\n"
+                    ),
+                comments="",
+            )
+        return savepath
+
 
     @staticmethod
     def _delete_txt(path: str, verbose: bool = False):
@@ -226,7 +287,7 @@ class Beam:
             )
             uvb.interpolation_function = "az_za_simple"
             self._delete_txt(txtpath, verbose=verbose)
-        elif beam_type == "E_field":
+        elif beam_type == "E_field":  #XXX here
             if verbose:
                 print("Making UVBeam object from E-field beam.")
             uvb.filename = [Path(self.fname).name]
