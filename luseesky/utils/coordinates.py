@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def sph2cart(theta: float, phi: float) -> np.ndarray:
     """
     Get the rotation matrix for transforming spherical coordinates
@@ -39,7 +40,7 @@ def cart2sph(theta: float, phi: float) -> np.ndarray:
 #         for j, ph in enumerate(phi):
 #             master_rot[i, j] = sph2cart(th, ph)
 #     return master_rot
-# 
+#
 # def cart2sph_array(theta: np.ndarray, phi: np.ndarray) -> np.ndarray:
 #     """
 #     Calling cart2sph for a range of thetas and phis.
