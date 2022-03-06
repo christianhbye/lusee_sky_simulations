@@ -7,7 +7,7 @@ from pyuvdata import uvbeam  # type: ignore
 from typing import Any, Tuple
 import warnings
 
-from .coordinates import sph2cart_array, cart2sph_array
+from .coordinates import sph2cart, cart2sph
 
 
 def mk_linspace(low: float, high: float, step: Any = 1) -> np.ndarray:
@@ -167,10 +167,14 @@ class Beam:
             warnings.warn(
                 "E-field is already in spherical coordinates.", UserWarning
             )
-        else:  # cartesian coordinates
-            th, ph = np.radian(self.theta), np.radian(self.phi)
-            rot_matrix = sph2cart_array(th, ph)
-            self.E_field = np.einsum("bcij, abcj", [rot_matrix, self.E_field])
+        else:  # cartesian coordinates, simplify with einsum!
+            E_sph = np.empty_like(self.E_field)
+            for i, th in enumerate(np.radians(self.theta)):
+                for j, ph in enumerate(np.radians(self.phi)):
+                    rot_matrix = cart2sph(th, ph)
+                    for k, freq in enumerate(self.frequencies):
+                        E_sph[k, i, j] = rot_matrix @ self.E_field[k, i, j]
+            self.E_field = E_sph
             self.beam_coords = "sphericals"
 
     def to_cartesian(self):
@@ -178,10 +182,14 @@ class Beam:
             warnings.warn(
                 "E-field is already in cartesian coordinates.", UserWarning
             )
-        else:  # spherical coordinates
-            th, ph = np.radian(self.theta), np.radian(self.phi)
-            rot_matrix = sph2cart_array(th, ph)
-            self.E_field = np.einsum("bcij, abcj", [rot_matrix, self.E_field])
+        else:  # spherical coordinates, simplify with einsum!
+            E_cart = np.empty_like(self.E_field)
+            for i, th in enumerate(np.radians(self.theta)):
+                for j, ph in enumerate(np.radians(self.phi)):
+                    rot_matrix = sph2cart(th, ph)
+                    for k, freq in enumerate(self.frequencies):
+                        E_cart[k, i, j] = rot_matrix @ self.E_field[k, i, j]
+            self.E_field = E_cart
             self.beam_coords = "cartesian"
 
     def to_uvbeam(

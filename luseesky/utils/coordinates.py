@@ -30,22 +30,22 @@ def cart2sph(theta: float, phi: float) -> np.ndarray:
     return rot_matrix
 
 
-def sph2cart_array(theta: np.ndarray, phi: np.ndarray) -> np.ndarray:
-    """
-    Calling sph2cart for a range of thetas and phis.
-    """
-    master_rot = np.empty((theta.size, phi.size, 3, 3))
-    for i, th in enumerate(theta):
-        for j, ph in enumerate(phi):
-            master_rot[i, j] = sph2cart(th, ph)
-    return master_rot
-
-def cart2sph_array(theta: np.ndarray, phi: np.ndarray) -> np.ndarray:
-    """
-    Calling cart2sph for a range of thetas and phis.
-    """
-    master_rot = np.empty((theta.size, phi.size, 3, 3))
-    for i, th in enumerate(theta):
-        for j, ph in enumerate(phi):
-            master_rot[i, j] = cart2sph(th, ph)
-    return master_rot
+# def sph2cart_array(theta: np.ndarray, phi: np.ndarray) -> np.ndarray:
+#     """
+#     Calling sph2cart for a range of thetas and phis.
+#     """
+#     master_rot = np.empty((theta.size, phi.size, 3, 3))
+#     for i, th in enumerate(theta):
+#         for j, ph in enumerate(phi):
+#             master_rot[i, j] = sph2cart(th, ph)
+#     return master_rot
+# 
+# def cart2sph_array(theta: np.ndarray, phi: np.ndarray) -> np.ndarray:
+#     """
+#     Calling cart2sph for a range of thetas and phis.
+#     """
+#     master_rot = np.empty((theta.size, phi.size, 3, 3))
+#     for i, th in enumerate(theta):
+#         for j, ph in enumerate(phi):
+#             master_rot[i, j] = cart2sph(th, ph)
+#     return master_rot
