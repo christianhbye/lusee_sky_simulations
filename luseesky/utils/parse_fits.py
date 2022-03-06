@@ -167,13 +167,14 @@ class Beam:
             warnings.warn(
                 "E-field is already in spherical coordinates.", UserWarning
             )
-        else:  # cartesian coordinates, simplify with einsum!
+        else:  # cartesian coordinates
             E_sph = np.empty_like(self.E_field)
             for i, th in enumerate(np.radians(self.theta)):
                 for j, ph in enumerate(np.radians(self.phi)):
                     rot_matrix = cart2sph(th, ph)
-                    for k, freq in enumerate(self.frequencies):
-                        E_sph[k, i, j] = rot_matrix @ self.E_field[k, i, j]
+                    E_sph[:, i, j] = np.einsum(
+                            "ij,fj->fi", rot_matrix, self.E_field[:, i, j]
+                            )
             self.E_field = E_sph
             self.beam_coords = "sphericals"
 
@@ -182,13 +183,14 @@ class Beam:
             warnings.warn(
                 "E-field is already in cartesian coordinates.", UserWarning
             )
-        else:  # spherical coordinates, simplify with einsum!
+        else:  # spherical coordinates
             E_cart = np.empty_like(self.E_field)
             for i, th in enumerate(np.radians(self.theta)):
                 for j, ph in enumerate(np.radians(self.phi)):
                     rot_matrix = sph2cart(th, ph)
-                    for k, freq in enumerate(self.frequencies):
-                        E_cart[k, i, j] = rot_matrix @ self.E_field[k, i, j]
+                    E_cart[:, i, j] = np.einsum(
+                            "ij,fj->fi", rot_matrix, self.E_field[:, i, j]
+                            )
             self.E_field = E_cart
             self.beam_coords = "cartesian"
 
