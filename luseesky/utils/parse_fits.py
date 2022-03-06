@@ -7,6 +7,8 @@ from pyuvdata import uvbeam  # type: ignore
 from typing import Any, Tuple
 import warnings
 
+from .coordinates import sph2cart_array, cart2sph_array
+
 
 def mk_linspace(low: float, high: float, step: Any = 1) -> np.ndarray:
     """
@@ -32,41 +34,6 @@ def Efield_to_power(efield: np.ndarray, axis: int = 3) -> np.ndarray:
     """
 
     return np.sqrt(np.sum(np.abs(efield) ** 2, axis=axis))
-
-
-def sph2cart(theta: float, phi: float) -> np.ndarray:
-    """
-    Get the rotation matrix for transforming spherical coordinates
-    to cartesian. Note that the matrix is orthogonal so the inverse transform
-    is given by its transpose.
-    """
-    sin_th = np.sin(theta)
-    cos_th = np.cos(theta)
-    sin_ph = np.sin(phi)
-    cos_ph = np.cos(phi)
-    rot_matrix = np.array(
-        [
-            [sin_th * cos_ph, sin_th * sin_ph, cos_th],
-            [cos_th * cos_ph, cos_th * sin_ph, -sin_th],
-            [-sin_ph, cos_ph, 0],
-        ]
-    )
-    return rot_matrix
-
-
-def cart2sph(x: float, y: float, z: float) -> np.ndarray:
-    """
-    Get the rotation matrix for transforming cartesian coordinates to
-    sphericals. This is simply the transpose of the matrix that transforms
-    sphericals to cartesian.
-    """
-    r = np.sqrt(x**2 + y**2 + z**2)
-    sin_th = np.sqrt(x**2 + y**2) / r  # ok since 0 <= theta <= 180
-    cos_th = z / r
-    sin_ph = y / (r * sin_th)
-    cos_ph = x / (r * cos_th)
-    rot_matrix = sph2cart(sin_th, cos_th, sin_ph, cos_ph).T
-    return rot_matrix
 
 
 @dataclass
@@ -201,14 +168,9 @@ class Beam:
                 "E-field is already in spherical coordinates.", UserWarning
             )
         else:  # cartesian coordinates
-            Ex = self.E_field[:, :, :, 0]
-            Ey = self.E_field[:, :, :, 1]
-            Ez = self.E_field[:, :, :, 2]
-            rot_matrix_re = cart2sph(Ex.real, Ey.real, Ez.real)
-            E_real = np.einsum("ij, abcj", [rot_matrix_re, self.E_field.real])
-            rot_matrix_im = cart2sph(Ex.imag, Ey.imag, Ez.imag)
-            E_im = np.einsum("ij, abcj", [rot_matrix_im, self.E_field.imag])
-            self.E_field = E_real + 1j * E_im
+            th, ph = np.radian(self.theta), np.radian(self.phi)
+            rot_matrix = sph2cart_array(th, ph)
+            self.E_field = np.einsum("bcij, abcj", [rot_matrix, self.E_field])
             self.beam_coords = "sphericals"
 
     def to_cartesian(self):
@@ -217,16 +179,9 @@ class Beam:
                 "E-field is already in cartesian coordinates.", UserWarning
             )
         else:  # spherical coordinates
-            Er = self.E_field[:, :, :, 0]
-            Eth = self.E_field[:, :, :, 1]
-            Eph = self.E_field[:, :, :, 2]
-            th = Eth.real + 1j * Eth.imag
-            ph = Eph.real + 1j * Eph.imag
-            rot_matrix_re = sph2cart(th.real, ph.real)
-            E_real = np.einsum("ij, abcj", [rot_matrix_re, self.E_field.real])
-            rot_matrix_im = sph2cart(th.imag, ph.imag)
-            E_im = np.einsum("ij, abcj", [rot_matrix_im, self.E_field.imag])
-            self.E_field = E_real + 1j * E_im
+            th, ph = np.radian(self.theta), np.radian(self.phi)
+            rot_matrix = sph2cart_array(th, ph)
+            self.E_field = np.einsum("bcij, abcj", [rot_matrix, self.E_field])
             self.beam_coords = "cartesian"
 
     def to_uvbeam(
