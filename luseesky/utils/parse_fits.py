@@ -195,15 +195,15 @@ class Beam:
         Save Efield beams in txt file format readable by UVBeam.
         """
         # get x-pol or y-pol. Easiest to convert to cartesian first:
-        if self.beam_coords == "sphericals":
-            self.to_cartesian()
-        if pol == "x":  # XXX: not optimal, should be done on a copy
-            self.E_field[:, :, :, 1:] = 0  # set Ey and Ez to 0 for x pol
-        elif pol == "y":
-            self.E_field[:, :, :, 0] = 0  # Ex = 0
-            self.E_field[:, :, :, 2] = 0  # Ez = 0
-        else:
-            raise ValueError("pol must be 'x' or 'y'")
+        #  if self.beam_coords == "sphericals":
+        #      self.to_cartesian()
+        #  if pol == "x":  # XXX: not optimal, should be done on a copy
+        #      self.E_field[:, :, :, 1:] = 0  # set Ey and Ez to 0 for x pol
+        #  elif pol == "y":
+        #      self.E_field[:, :, :, 0] = 0  # Ex = 0
+        #      self.E_field[:, :, :, 2] = 0  # Ez = 0
+        #  else:
+        #      raise ValueError("pol must be 'x' or 'y'")
         self.to_sphericals()
         E_theta = self.E_field[:, :, :, 1]
         E_phi = self.E_field[:, :, :, 2]
@@ -213,6 +213,13 @@ class Beam:
         phi_mag = np.abs(E_phi)
         phi_phase = np.degrees(np.angle(E_phi))
         phi_phase = np.where(phi_phase < 0, phi_phase + 360, phi_phase)
+        ax_ratio_sq = (
+            theta_mag**2 + phi_mag**2 + np.abs(E_theta**2 + E_phi**2)
+        )
+        ax_ratio_sq /= (
+            theta_mag**2 + phi_mag**2 - np.abs(E_theta**2 + E_phi**2)
+        )
+        ax_ratio = np.sqrt(ax_ratio_sq)
         theta_mag, theta, phi = self._flatten(
             beam_type="E_field", arr=theta_mag
         )
@@ -225,19 +232,15 @@ class Beam:
         phi_phase = self._flatten(
             beam_type="E_field", arr=phi_phase, return_th_ph=False
         )
+        ax_ratio = self._flatten(
+            beam_type="E_field", arr=ax_ratio, return_th_ph=False
+        )
         delta = np.radians(theta_phase - phi_phase)
         E_mag = np.sqrt(
             theta_mag**2
             + phi_mag**2
             + 2 * theta_mag * phi_mag * np.cos(delta)
         )
-        ax_ratio_sq = (
-            theta_mag**2 + phi_mag**2 + np.abs(E_theta**2 + E_phi**2)
-        )
-        ax_ratio_sq /= (
-            theta_mag**2 + phi_mag**2 - np.abs(E_theta**2 + E_phi**2)
-        )
-        ax_ratio = np.sqrt(ax_ratio_sq)
         savepath = path + "/tmp"
         Path(savepath).mkdir()
         if verbose:
