@@ -110,6 +110,38 @@ class Beam:
         plt.xlabel("$\\theta$ [deg]")
         plt.colorbar(label="Power [V]")
         plt.show()
+    
+    def to_sphericals(self):
+        if self.beam_coords == "sphericals":
+            warnings.warn(
+                "E-field is already in spherical coordinates.", UserWarning
+            )
+        else:  # cartesian coordinates
+            E_sph = np.empty_like(self.E_field)
+            for i, th in enumerate(np.radians(self.theta)):
+                for j, ph in enumerate(np.radians(self.phi)):
+                    rot_matrix = cart2sph(th, ph)
+                    E_sph[:, i, j] = np.einsum(
+                        "ij,fj->fi", rot_matrix, self.E_field[:, i, j]
+                    )
+            self.E_field = E_sph
+            self.beam_coords = "sphericals"
+
+    def to_cartesian(self):
+        if self.beam_coords == "cartesian":
+            warnings.warn(
+                "E-field is already in cartesian coordinates.", UserWarning
+            )
+        else:  # spherical coordinates
+            E_cart = np.empty_like(self.E_field)
+            for i, th in enumerate(np.radians(self.theta)):
+                for j, ph in enumerate(np.radians(self.phi)):
+                    rot_matrix = sph2cart(th, ph)
+                    E_cart[:, i, j] = np.einsum(
+                        "ij,fj->fi", rot_matrix, self.E_field[:, i, j]
+                    )
+            self.E_field = E_cart
+            self.beam_coords = "cartesian"
 
     def _flatten(
             self,
@@ -150,12 +182,23 @@ class Beam:
             )
         return savepath
 
-    def _write_txt_Efield(self, path: str = ".", verbose: bool = False) -> str:
+    def _write_txt_Efield(
+        self, pol: str = "x", path: str = ".", verbose: bool = False
+    ) -> str:
         """
         Save Efield beams in txt file format readable by UVBeam.
         """
-        if beam_coords == "cartesian":
-            self.to_sphericals()
+        # get x-pol or y-pol. Easiest to convert to cartesian first:
+        if beam_coords == "sphericals":
+            self.to_cartesian()
+        if pol == "x":  #XXX: not optimal, should be done on a copy
+            self.E_field[:, :, :, 1:] = 0  # set Ey and Ez to 0 for x pol
+        elif pol == "y":
+            self.E_field[:, :, :, 0] = 0  # Ex = 0
+            self.E_field[:, :, :, 2] = 0  # Ez = 0
+        else:
+            raise ValueError("pol must be 'x' or 'y'")
+        self.to_sphericals()
         E_theta = self.E_field[:, :, :, 1]
         E_phi = self.E_field[:, :, :, 2]
         theta_mag = np.abs(E_theta)
@@ -223,37 +266,6 @@ class Beam:
         if verbose:
             print(f"Remove directory {path}.")
 
-    def to_sphericals(self):
-        if self.beam_coords == "sphericals":
-            warnings.warn(
-                "E-field is already in spherical coordinates.", UserWarning
-            )
-        else:  # cartesian coordinates
-            E_sph = np.empty_like(self.E_field)
-            for i, th in enumerate(np.radians(self.theta)):
-                for j, ph in enumerate(np.radians(self.phi)):
-                    rot_matrix = cart2sph(th, ph)
-                    E_sph[:, i, j] = np.einsum(
-                        "ij,fj->fi", rot_matrix, self.E_field[:, i, j]
-                    )
-            self.E_field = E_sph
-            self.beam_coords = "sphericals"
-
-    def to_cartesian(self):
-        if self.beam_coords == "cartesian":
-            warnings.warn(
-                "E-field is already in cartesian coordinates.", UserWarning
-            )
-        else:  # spherical coordinates
-            E_cart = np.empty_like(self.E_field)
-            for i, th in enumerate(np.radians(self.theta)):
-                for j, ph in enumerate(np.radians(self.phi)):
-                    rot_matrix = sph2cart(th, ph)
-                    E_cart[:, i, j] = np.einsum(
-                        "ij,fj->fi", rot_matrix, self.E_field[:, i, j]
-                    )
-            self.E_field = E_cart
-            self.beam_coords = "cartesian"
 
     def to_uvbeam(
         self, beam_type: str = "E_field", verbose: bool = False
@@ -280,57 +292,42 @@ class Beam:
                 telescope_name="lusee-night",
                 feed_name="lusee",
                 feed_version="1.0",
-                model_name="monopole",
+                model_name="dipole_180",
                 model_version="1.0",
-                history="003",
+                history="004",
                 reference_impedance=50,
             )
             uvb.interpolation_function = "az_za_simple"
             self._delete_txt(txtpath, verbose=verbose)
-        elif beam_type == "E_field":  #XXX here
+        elif beam_type == "E_field":
             if verbose:
                 print("Making UVBeam object from E-field beam.")
-            uvb.filename = [Path(self.fname).name]
-            uvb._filename.form = (1,)
-            uvb.telescope_name = "lusee-night"
-            uvb.feed_name = "lusee"
-            uvb.feed_version = "1.0"
-            uvb.model_name = "monopole"
-            uvb.model_version = "1.0"
-            uvb.history = "003" + uvb.pyuvdata_version_str
-            uvb.reference_impedance = 50.0
-            uvb.Naxes_vec = 2
-            uvb.Ncomponents_vec = 2
-            uvb.feed_array = np.array(["x", "y"])
-            uvb.Nfeeds = uvb.feed_array.size
-            uvb._set_efield()
-            uvb.data_normalization = "physical"
-            uvb.antenna_type = "simple"
-            uvb.Nfreqs = self.frequencies.size
-            uvb.Nspws = 1
-            uvb.freq_array = self.frequencies.reshape(1, -1) * 1e6
-            uvb.bandpass_array = np.zeros_like(uvb.freq_array)
-            uvb.spw_array = np.array([0])
-            uvb.pixel_coordinate_system = "az_za"
-            uvb._set_cs_params()
-            uvb.axis1_array = np.radians(self.phi)
-            uvb.Naxes1 = uvb.axis1_array.size
-            uvb.axis2_array = np.radians(self.theta)
-            uvb.Naxes2 = uvb.axis2_array.size
-            uvb.data_array = np.zeros(
-                uvb._data_array.expected_shape(uvb), dtype="complex128"
+            txtpath = self._write_txt_Efield(pol="x", verbose=verbose)
+            txtfiles = [str(child) for child in Path(txtpath).iterdir()]
+            frequencies = [
+                1e6 * float(Path(f).name[: -len(".txt")]) for f in txtfiles
+            ]
+            txtfiles = sorted(
+                txtfiles, key=lambda x: frequencies[txtfiles.index(x)]
             )
-            uvb.basis_vector_array = np.zeros(
-                (uvb.Naxes_vec, uvb.Ncomponents_vec, uvb.Naxes2, uvb.Naxes1)
+            frequencies = sorted(frequencies)
+            uvb.read_cst_beam(
+                filename=txtfiles,
+                beam_type="efield",
+                feed_pol="x",
+                rotate_pol=True, #XXX
+                frequency=frequencies,
+                telescope_name="lusee-night",
+                feed_name="lusee",
+                feed_version="1.0",
+                model_name="dipole_180",
+                model_version="1.0",
+                history="004",
+                x_orientation="north",  #XXX
+                reference_impedance=50,
             )
-            uvb.basis_vector_array[0, 0] = 1.0
-            uvb.basis_vector_array[1, 1] = 1.0
-            # data_array: [x,y], 0, [feed/pol], freq, theta, phi
-            uvb.data_array[0, 0, 0] = self.E_field[:, :, :, 0]
-            uvb.data_array[1, 0, 1] = self.E_field[:, :, :, 1]
-            uvb.bandpass_array[0] = 1
-            uvb.check(check_extra=True, run_check_acceptability=False)
             uvb.interpolation_function = "az_za_simple"
+            self._delete_txt(txtpath, verbose=verbose)
         else:
             raise ValueError("beam_type must be 'power' or 'E_field'")
         return uvb
