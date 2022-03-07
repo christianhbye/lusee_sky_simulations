@@ -110,7 +110,7 @@ class Beam:
         plt.xlabel("$\\theta$ [deg]")
         plt.colorbar(label="Power [V]")
         plt.show()
-    
+
     def to_sphericals(self):
         if self.beam_coords == "sphericals":
             warnings.warn(
@@ -144,10 +144,10 @@ class Beam:
             self.beam_coords = "cartesian"
 
     def _flatten(
-            self,
-            beam_type: str = "power",
-            arr: Optional[np.ndarray] = None,
-            return_th_ph = True
+        self,
+        beam_type: str = "power",
+        arr: Optional[np.ndarray] = None,
+        return_th_ph=True,
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         Convert array with the shape (freq_size, th_size, ph_size) to a
@@ -189,9 +189,9 @@ class Beam:
         Save Efield beams in txt file format readable by UVBeam.
         """
         # get x-pol or y-pol. Easiest to convert to cartesian first:
-        if beam_coords == "sphericals":
+        if self.beam_coords == "sphericals":
             self.to_cartesian()
-        if pol == "x":  #XXX: not optimal, should be done on a copy
+        if pol == "x":  # XXX: not optimal, should be done on a copy
             self.E_field[:, :, :, 1:] = 0  # set Ey and Ez to 0 for x pol
         elif pol == "y":
             self.E_field[:, :, :, 0] = 0  # Ex = 0
@@ -208,23 +208,29 @@ class Beam:
         phi_phase = np.degrees(np.angle(E_phi))
         phi_phase = np.where(phi_phase < 0, phi_phase + 360, phi_phase)
         theta_mag, theta, phi = self._flatten(
-                beam_type="E_field", arr=theta_mag
-                )
+            beam_type="E_field", arr=theta_mag
+        )
         theta_phase = self._flatten(
-                beam_type="E_field", arr=theta_phase, return_th_ph=False
-                ) 
+            beam_type="E_field", arr=theta_phase, return_th_ph=False
+        )
         phi_mag = self._flatten(
-                beam_type="E_field", arr=phi_mag, return_th_ph=False
-                )
+            beam_type="E_field", arr=phi_mag, return_th_ph=False
+        )
         phi_phase = self._flatten(
-                beam_type="E_field", arr=phi_phase, return_th_ph=False
-                )
+            beam_type="E_field", arr=phi_phase, return_th_ph=False
+        )
         delta = np.radians(theta_phase - phi_phase)
         E_mag = np.sqrt(
-                theta_mag**2 + phi_mag**2 + 2*theta_mag*phi_mag*np.cos(delta)
-            )
-        ax_ratio_sq = theta_mag**2 + phi_mag**2 + np.abs(E_theta**2 + E_phi**2)
-        ax_ratio_sq /= theta_mag**2 + phi_mag**2 - np.abs(E_theta**2+E_phi**2)
+            theta_mag**2
+            + phi_mag**2
+            + 2 * theta_mag * phi_mag * np.cos(delta)
+        )
+        ax_ratio_sq = (
+            theta_mag**2 + phi_mag**2 + np.abs(E_theta**2 + E_phi**2)
+        )
+        ax_ratio_sq /= (
+            theta_mag**2 + phi_mag**2 - np.abs(E_theta**2 + E_phi**2)
+        )
         ax_ratio = np.sqrt(ax_ratio_sq)
         savepath = path + "/tmp"
         Path(savepath).mkdir()
@@ -242,18 +248,17 @@ class Beam:
                         theta_phase[i],
                         phi_mag[i],
                         phi_phase[i],
-                        ax_ratio[i]
+                        ax_ratio[i],
                     )
                 ),
                 header=(
                     "Theta [deg] Phi [deg] Abs(V) [V] Abs(Theta) [V]"
                     "Phase(Theta) [deg] Abs(Phi) [V] Phase(Phi) [deg]"
                     "Ax.Ratio []\n\n"
-                    ),
+                ),
                 comments="",
             )
         return savepath
-
 
     @staticmethod
     def _delete_txt(path: str, verbose: bool = False):
@@ -265,7 +270,6 @@ class Beam:
         Path(path).rmdir()
         if verbose:
             print(f"Remove directory {path}.")
-
 
     def to_uvbeam(
         self, beam_type: str = "E_field", verbose: bool = False
@@ -315,7 +319,7 @@ class Beam:
                 filename=txtfiles,
                 beam_type="efield",
                 feed_pol="x",
-                rotate_pol=True, #XXX
+                rotate_pol=True,  # XXX
                 frequency=frequencies,
                 telescope_name="lusee-night",
                 feed_name="lusee",
@@ -323,7 +327,7 @@ class Beam:
                 model_name="dipole_180",
                 model_version="1.0",
                 history="004",
-                x_orientation="north",  #XXX
+                x_orientation="north",  # XXX
                 reference_impedance=50,
             )
             uvb.interpolation_function = "az_za_simple"
