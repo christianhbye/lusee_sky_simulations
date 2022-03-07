@@ -4,9 +4,11 @@ from pathlib import Path
 
 parser = ArgumentParser()
 parser.add_argument("dir", type=str)
+parser.add_argument("--overwrite", type=bool, default=False)
 args = parser.parse_args()
 
 DIR = args.dir
+clobber = args.overwrite
 
 UVDIR = "../uvbeams/" + DIR[len("../../") :]
 assert "uvbeams/Ant" in UVDIR  # checking that joining the dirname works
@@ -24,7 +26,7 @@ for beamfile in Path(DIR).iterdir():
     beam = Beam(str(beamfile))
     uvb = beam.to_uvbeam()
     try:
-        uvb.write_beamfits(UVDIR + "/" + UVNAME, clobber=False)
+        uvb.write_beamfits(UVDIR + "/" + UVNAME, clobber=clobber)
     except (OSError) as e:
         print(e)
         continue
