@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt  # type: ignore
 import numpy as np
 from pathlib import Path
 from pyuvdata import uvbeam  # type: ignore
-from typing import Any, Optional, Tuple
+from typing import Any, Optional
 import warnings
 
 from .coordinates import sph2cart, cart2sph
@@ -148,14 +148,17 @@ class Beam:
         beam_type: str = "power",
         arr: Optional[np.ndarray] = None,
         return_th_ph=True,
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    ) -> np.ndarray:
         """
         Convert array with the shape (freq_size, th_size, ph_size) to a
         2d-array of shape (freq_size, th_size*ph_size) where theta increases
         faster than phi
         """
-        if beam_type == "power" and arr is None:
-            arr = np.copy(self.power)
+        if arr is None:
+            if beam_type == "power":
+                arr = np.copy(self.power)
+            else:
+                raise ValueError("No default array to flatten for E-field.")
         flat_beam = arr.reshape(
             self.frequencies.size, self.theta.size * self.phi.size, order="F"
         )
@@ -165,7 +168,10 @@ class Beam:
             .reshape(self.phi.size, self.theta.size, order="F")
             .flatten(order="C")
         )
-        return flat_beam, flat_theta, flat_phi
+        if return_th_ph:
+            return np.array([flat_beam, flat_theta, flat_phi])
+        else:
+            return flat_beam
 
     def _write_txt_power(self, path: str = ".", verbose: bool = False) -> str:
         beam2d, th2d, ph2d = self._flatten()
