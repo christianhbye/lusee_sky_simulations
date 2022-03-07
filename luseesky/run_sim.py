@@ -15,10 +15,7 @@ def run(outpath: str):
     uvd = uvsim.run_uvsim(
         LPATH + "/sim_files/obsparam.yaml", return_uv=True, quiet=False
     )
-    max_imag = np.max(np.abs(uvd.data_array.imag))
-    # print(f"{max_imag=}")
-    assert np.isclose(max_imag, 0.0, atol=1e-3), "Large imaginary part of vis"
-    uvd.data_array = uvd.data_array.real
+#    uvd.data_array = uvd.data_array.real
 
     save_dict = {
         "data": uvd.data_array,
