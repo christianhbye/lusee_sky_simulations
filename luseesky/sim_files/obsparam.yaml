@@ -1,6 +1,6 @@
 filing:
   outdir: /home/christian/Documents/research/lusee/lusee_sky_simulations/luseesky/results/results
-  outfile_name: uvbeams/AntennaSimResults/004_Freq1-50MHz_Delta1MHz_AntennaLength1-6m_Delta1m_AntennaAngle75deg_LanderHeight2m/phase180/RadiatedElectricField_AntennaLength6m_AntennaAngle75deg_LanderHeight2m_LBoxZ70cm_Phase+180deg.uvbeam_uvsim
+  outfile_name: uvbeams/AntennaSimResults/004_Freq1-50MHz_Delta1MHz_AntennaLength1-6m_Delta1m_AntennaAngle75deg_LanderHeight2m/phase180/simlengths/RadiatedElectricField_AntennaLength6m_AntennaAngle75deg_LanderHeight2m_LBoxZ70cm_Phase+180deg.uvbeam_uvsim
   output_format: uvfits
 freq:
   Nfreqs: 50

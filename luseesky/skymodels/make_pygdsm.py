@@ -36,8 +36,8 @@ class SkyMap:
         nside: Optional[int] = 16,
         npix: Optional[int] = None,
         healpix_map: Optional[np.ndarray] = None,
-        degrade: bool = False,
-        base_fname: str = "./pygdsm16",
+        degrade: bool = True,
+        base_name: str = "./pygdsm16",
     ):
         """
         Must at least specify one of nside, npix, or healpix_map. If they
@@ -93,7 +93,7 @@ class SkyMap:
         self.npix = npix
         self.healpix_map = healpix_map
         self.degrade = degrade
-        self.base_fname = base_fname
+        self.base_name = base_name
 
     def gen_gsm(self):
         gsm = GlobalSkyModel2016(freq_unit="MHz")
@@ -112,7 +112,7 @@ class SkyMap:
         # some mock stokes params assuming Ex == Ey
         stokes = u.Quantity(np.zeros((4, 1, self.npix)), unit=u.K)
         stokes[0, 0] = self.healpix_map * u.K  # set I to the GDSM Temp
-        # stokes[2, 0] = stokes[0, 0]  # U = I, Q=V=0
+        stokes[2, 0] = stokes[0, 0]  # U = I, Q=V=0 #XXX
         skymodel = pyradiosky.SkyModel()
         skymodel.Ncomponents = self.npix
         skymodel.Nfreqs = 1
@@ -129,9 +129,9 @@ class SkyMap:
         skymodel.reference_frequency = (
             self.frequency * np.ones(self.npix) * u.MHz
         )
-        skymodel.spectral_index = -2.5 * np.ones(self.npix)  # XXX
+        skymodel.spectral_index = -0.5 * np.ones(self.npix)  # in Jy
         assert skymodel.check()
-        skymodel.healpix_to_point()  # convert to point sources
+        skymodel.healpix_to_point(to_jy=True)  # convert to point sources
         skymodel.write_text_catalog(self.base_name + f"_nside{self.nside}.txt")
 
 

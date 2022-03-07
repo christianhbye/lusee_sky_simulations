@@ -1,4 +1,5 @@
 from luseesky.utils import parse_fits as lpf
+from luseesky.utils import coordinates as lcoords
 import numpy as np
 import pytest
 
@@ -47,3 +48,30 @@ def test_flatten():
             for i in range(th_size)
         ]
     )
+
+
+def test_to_sphericals_cartesian():
+    """
+    Check that both the real and imaginary parts are transformed correctly
+    for all frequencies and sky coordinates
+    """
+    FREQ_IDX, TH_IDX, PH_IDX = 0, 20, 80
+    test_beam = lpf.Beam("luseesky/tests/beam.fits")
+    assert test_beam.beam_coords == "cartesian"
+    E_cart = test_beam.E_field
+    Ex = test_beam.E_field[FREQ_IDX, TH_IDX, PH_IDX, 0]
+    Ey = test_beam.E_field[FREQ_IDX, TH_IDX, PH_IDX, 1]
+    Ez = test_beam.E_field[FREQ_IDX, TH_IDX, PH_IDX, 2]
+    test_beam.to_sphericals()
+    assert test_beam.beam_coords == "sphericals"
+    E_sph = test_beam.E_field
+    th = np.radians(test_beam.theta[TH_IDX])
+    ph = np.radians(test_beam.phi[PH_IDX])
+    assert np.allclose(
+        E_sph[FREQ_IDX, TH_IDX, PH_IDX],
+        lcoords.cart2sph(th, ph) @ np.array([Ex, Ey, Ez]),
+    )
+    # convert back
+    test_beam.to_cartesian()
+    assert test_beam.beam_coords == "cartesian"
+    assert np.allclose(E_cart, test_beam.E_field)
