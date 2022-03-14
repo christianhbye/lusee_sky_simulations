@@ -32,7 +32,7 @@ def gen_uvbdict(
 
 def gen_obsparams(
     ant_model: str,
-    nside: int = 16,
+    nside: int = 64,
     outpath: str = LPATH + "/sim_files/obsparam.yaml",
 ):
     """
@@ -50,7 +50,9 @@ def gen_obsparams(
             "end_freq": 50000000.0,
             "channel_width": 1000000.0,
         },
-        "sources": {"catalog": f"{LPATH}/skymodels/pygdsm16_nside{nside}.txt"},
+        "sources": {
+            "catalog": f"{LPATH}/skymodels/pygdsm16_nside{nside}.skyh5"
+            },
         "telescope": {
             "array_layout": f"{LPATH}/sim_files/layout.csv",
             "telescope_config_name": f"{LPATH}/sim_files/uvbeam.yaml",
