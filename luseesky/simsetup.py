@@ -10,13 +10,16 @@ LPATH = (
 
 
 def gen_uvbdict(
-    ant_path: str, outpath: str = LPATH + "/sim_files/uvbeam.yaml"
+    ant_path: str,
+    telescope_coords: str = "(0., 180., 0)",
+    outpath: str = LPATH + "/sim_files/uvbeam.yaml"
 ):
     """
     Generate the uvbeam.yaml file.
 
     Parameters
         ant_path: str, path to the .uvbeam file of the antenna
+        telescope_coords: str, moon coordinates (lon, lat, alt) of telescope
         outpath: str, path + filename of the uvbeam.yaml file that goes into
         pyuvsim
     """
@@ -26,7 +29,7 @@ def gen_uvbdict(
             1: {"type": "airy", "diameter": 16},
         },
         "freq_interp_kind": "linear",
-        "telescope_location": "(0., 180., 0.)",
+        "telescope_location": f"{telescope_coords}",
         "world": "moon",
         "telescope_name": "LuSEE-Night",
         "x_orientation": "north",
@@ -64,7 +67,7 @@ def gen_obsparams(
             "channel_width": 1000000.0,
         },
         "sources": {
-            "catalog": f"{LPATH}/skymodels/pygdsm16_nside{nside}.skyh5"
+            "catalog": f"{LPATH}/skymodels/pygdsm16_nside{nside}.txt"
             },
         "telescope": {
             "array_layout": f"{LPATH}/sim_files/layout.csv",
