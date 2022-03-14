@@ -11,7 +11,7 @@ LPATH = (
 
 def gen_uvbdict(
     ant_path: str,
-    telescope_coords: str = "(0., 180., 0)",
+    telescope_coords: str = "(0., 180., 0.)",
     outpath: str = LPATH + "/sim_files/uvbeam.yaml"
 ):
     """
