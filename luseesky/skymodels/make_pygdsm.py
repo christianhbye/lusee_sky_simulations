@@ -132,8 +132,8 @@ class SkyMap:
         skymodel.spectral_index = -0.5 * np.ones(self.npix)  # in Jy
         assert skymodel.check()
         skymodel.healpix_to_point(to_jy=True)  # convert to point sources
-        #skymodel.write_text_catalog(self.base_name + f"_nside{self.nside}.txt")
-        skymodel.write_skyh5(self.base_name + f"_nside{self.nside}.skyh5")
+        skymodel.write_text_catalog(self.base_name + f"_nside{self.nside}.txt")
+        #skymodel.write_skyh5(self.base_name + f"_nside{self.nside}.skyh5")
 
 
 if __name__ == "__main__":
