@@ -14,6 +14,11 @@ def gen_uvbdict(
 ):
     """
     Generate the uvbeam.yaml file.
+
+    Parameters
+        ant_path: str, path to the .uvbeam file of the antenna
+        outpath: str, path + filename of the uvbeam.yaml file that goes into
+        pyuvsim
     """
     uvbdict = {
         "beam_paths": {
@@ -37,6 +42,14 @@ def gen_obsparams(
 ):
     """
     Generate the obsparam dict.
+
+    Parameters:
+        ant_model: str, some defining characteristic of antenna. This defines
+        the outfile name so picking something unique lessens the chances of
+        overwriting another result!
+        nside: int, nside of healpix map of sky
+        outpath: str, path + filename of obsparam.yaml file that gets fed into
+        pyuvsim.
     """
     obsparams = {
         "filing": {
