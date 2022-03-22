@@ -10,10 +10,18 @@ LPATH = (
 
 
 def gen_uvbdict(
-    ant_path: str, outpath: str = LPATH + "/sim_files/uvbeam.yaml"
+    ant_path: str,
+    telescope_coords: str = "(0., 180., 0.)",
+    outpath: str = LPATH + "/sim_files/uvbeam.yaml"
 ):
     """
     Generate the uvbeam.yaml file.
+
+    Parameters
+        ant_path: str, path to the .uvbeam file of the antenna
+        telescope_coords: str, moon coordinates (lon, lat, alt) of telescope
+        outpath: str, path + filename of the uvbeam.yaml file that goes into
+        pyuvsim
     """
     uvbdict = {
         "beam_paths": {
@@ -21,7 +29,7 @@ def gen_uvbdict(
             1: {"type": "airy", "diameter": 16},
         },
         "freq_interp_kind": "linear",
-        "telescope_location": "(0., 180., 0.)",
+        "telescope_location": f"{telescope_coords}",
         "world": "moon",
         "telescope_name": "LuSEE-Night",
         "x_orientation": "north",
@@ -32,11 +40,19 @@ def gen_uvbdict(
 
 def gen_obsparams(
     ant_model: str,
-    nside: int = 16,
+    nside: int = 64,
     outpath: str = LPATH + "/sim_files/obsparam.yaml",
 ):
     """
     Generate the obsparam dict.
+
+    Parameters:
+        ant_model: str, some defining characteristic of antenna. This defines
+        the outfile name so picking something unique lessens the chances of
+        overwriting another result!
+        nside: int, nside of healpix map of sky
+        outpath: str, path + filename of obsparam.yaml file that gets fed into
+        pyuvsim.
     """
     obsparams = {
         "filing": {
@@ -50,7 +66,9 @@ def gen_obsparams(
             "end_freq": 50000000.0,
             "channel_width": 1000000.0,
         },
-        "sources": {"catalog": f"{LPATH}/skymodels/pygdsm16_nside{nside}.txt"},
+        "sources": {
+            "catalog": f"{LPATH}/skymodels/pygdsm16_nside{nside}.txt"
+            },
         "telescope": {
             "array_layout": f"{LPATH}/sim_files/layout.csv",
             "telescope_config_name": f"{LPATH}/sim_files/uvbeam.yaml",

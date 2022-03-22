@@ -260,6 +260,7 @@ class Beam:
                         ax_ratio[i],
                     )
                 ),
+                fmt="%.7f",
                 header=(
                     "Theta [deg] Phi [deg] Abs(V) [V] Abs(Theta) [V]"
                     "Phase(Theta) [deg] Abs(Phi) [V] Phase(Phi) [deg]"

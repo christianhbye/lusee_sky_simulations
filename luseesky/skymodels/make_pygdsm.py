@@ -133,10 +133,16 @@ class SkyMap:
         assert skymodel.check()
         skymodel.healpix_to_point(to_jy=True)  # convert to point sources
         skymodel.write_text_catalog(self.base_name + f"_nside{self.nside}.txt")
+        #skymodel.write_skyh5(self.base_name + f"_nside{self.nside}.skyh5")
 
 
 if __name__ == "__main__":
-    sm = SkyMap()
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
+    parser.add_argument("nside", type=int, default=16)
+    args = parser.parse_args()
+
+    sm = SkyMap(nside=args.nside)
     if sm.healpix_map is None:
         sm.gen_gsm()
     sm.make_pyradio_skymap()
