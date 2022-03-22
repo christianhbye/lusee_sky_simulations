@@ -112,7 +112,6 @@ class SkyMap:
         # some mock stokes params assuming Ex == Ey
         stokes = u.Quantity(np.zeros((4, 1, self.npix)), unit=u.K)
         stokes[0, 0] = self.healpix_map * u.K  # set I to the GDSM Temp
-        stokes[2, 0] = stokes[0, 0]  # U = I, Q=V=0 #XXX
         skymodel = pyradiosky.SkyModel()
         skymodel.Ncomponents = self.npix
         skymodel.Nfreqs = 1
